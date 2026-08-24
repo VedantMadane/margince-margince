@@ -165,6 +165,37 @@ func TestGmailPollRegistryNilWhenUnconfigured(t *testing.T) {
 	}
 }
 
+// The stored-app resolver SURVIVES the option order cmd/api uses.
+//
+// It did not. WithKeyvault installed it and WithGmailCapture then replaced the
+// whole connectorHandlers struct with a composite literal that omitted the
+// field, so every composed installation fell back to the environment and the
+// feature was inert — while every test still passed, because none of them
+// applied both options in the order the api does.
+//
+// Asserted through the applied options rather than by reading the field on a
+// hand-built struct: the defect was in the WIRING, and a fixture that builds the
+// struct itself cannot see it.
+func TestTheStoredAppResolverSurvivesBothCaptureOptions(t *testing.T) {
+	var s Server
+	// The order cmd/api applies them in: keyvault first, gmail after.
+	WithKeyvault(fakeVault{})(&s, nil)
+	if s.googleAppResolver == nil {
+		t.Fatal("WithKeyvault installed no stored-app resolver")
+	}
+	if s.googleCredentials == nil {
+		t.Error("WithKeyvault did not carry the resolver into the connector handlers")
+	}
+
+	WithGmailCapture(GmailConfig{
+		ClientID: "id", ClientSecret: "sec",
+		StateKey: "0123456789abcdef0123456789abcdef", PublicBaseURL: "https://app",
+	}, CaptureConfig{})(&s, nil)
+	if s.googleCredentials == nil {
+		t.Error("WithGmailCapture dropped the stored-app resolver; an app set in Settings is unreachable and the installation silently keeps using the environment's")
+	}
+}
+
 func TestWithGmailCaptureWiresOrSkips(t *testing.T) {
 	full := GmailConfig{ClientID: "id", ClientSecret: "sec", StateKey: "0123456789abcdef0123456789abcdef", PublicBaseURL: "https://app"}
 
@@ -177,11 +208,20 @@ func TestWithGmailCaptureWiresOrSkips(t *testing.T) {
 	}
 	// The one Google app mounts BOTH connectors: gcal must resolve through the
 	// production wiring, not only through the manually-injected route tests.
-	if _, ok := s.oauthApp(providerGmail); !ok {
-		t.Error("WithGmailCapture(full) did not compose the gmail OAuth app")
-	}
-	if _, ok := s.oauthApp(providerGcal); !ok {
-		t.Error("WithGmailCapture(full) did not compose the gcal OAuth app")
+	// A background context, because the app is now resolved per call. This
+	// wiring composes no vault, so there is no resolver and both fall back to
+	// the environment-composed app — the case this asserts.
+	for _, provider := range []string{providerGmail, providerGcal} {
+		app, ok, err := s.oauthApp(context.Background(), provider)
+		if err != nil {
+			t.Errorf("resolving the %s OAuth app: %v", provider, err)
+		}
+		if !ok {
+			t.Errorf("WithGmailCapture(full) did not compose the %s OAuth app", provider)
+		}
+		if app.authCodeURL == nil {
+			t.Errorf("the %s app has no consent-URL builder", provider)
+		}
 	}
 
 	// Fully configured but NO vault → no-op (can't seal the refresh token).
