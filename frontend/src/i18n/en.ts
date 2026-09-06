@@ -133,6 +133,7 @@ export const en = {
   "history.field.occurred_at": "Occurred",
   "history.field.organization_id": "Company",
   "history.field.owner_id": "Owner",
+  "history.field.visibility": "Visibility",
   "history.field.parent_org_id": "Parent company",
   "history.field.partner_attribution": "Partner attribution",
   "history.field.partner_org_id": "Partner",
@@ -3328,11 +3329,14 @@ export const en = {
 
   "personAccess.title": "Who can see this person",
   "personAccess.privateToYou":
-    "Private to you. Your mailbox created this person, and nobody else in the organization can see them — not your team, and not an admin.",
+    "Private to its owner. Nobody else in the organization can see this person — not the team, and not an admin.",
   "personAccess.organization":
     "Everyone in the organization can see this person.",
   "personAccess.share": "Share with the organization",
   "personAccess.published": "The organization can see this person now.",
+  "personAccess.makePrivate": "Make private",
+  "personAccess.madePrivate":
+    "This person is the owner's again. Anyone the record was explicitly shared with keeps their access.",
   "compose.reply": "Reply",
   "compose.writeEmail": "Write email",
   "compose.relink": "Relink",

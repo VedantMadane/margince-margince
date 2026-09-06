@@ -133,6 +133,7 @@ export const de = {
   "history.field.occurred_at": "Zeitpunkt",
   "history.field.organization_id": "Unternehmen",
   "history.field.owner_id": "Verantwortlich",
+  "history.field.visibility": "Sichtbarkeit",
   "history.field.parent_org_id": "Muttergesellschaft",
   "history.field.partner_attribution": "Partnerzuordnung",
   "history.field.partner_org_id": "Partner",
@@ -3251,6 +3252,9 @@ export const de = {
   "personAccess.organization": "Alle im Unternehmen sehen diese Person.",
   "personAccess.share": "Mit dem Unternehmen teilen",
   "personAccess.published": "Das Unternehmen sieht diese Person jetzt.",
+  "personAccess.makePrivate": "Privat setzen",
+  "personAccess.madePrivate":
+    "Diese Person gehört wieder ihrem Besitzer. Wer den Datensatz ausdrücklich freigegeben bekommen hat, behält den Zugriff.",
   "compose.reply": "Antworten",
   "compose.writeEmail": "E-Mail schreiben",
   "compose.relink": "Neu verknüpfen",

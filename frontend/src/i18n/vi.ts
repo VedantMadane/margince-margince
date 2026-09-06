@@ -139,6 +139,7 @@ export const vi = {
   "history.field.occurred_at": "Thời điểm",
   "history.field.organization_id": "Công ty",
   "history.field.owner_id": "Người sở hữu",
+  "history.field.visibility": "Phạm vi hiển thị",
   "history.field.parent_org_id": "Công ty mẹ",
   "history.field.partner_attribution": "Ghi nhận đối tác",
   "history.field.partner_org_id": "Đối tác",
@@ -3214,6 +3215,9 @@ export const vi = {
     "Mọi người trong tổ chức đều xem được người này.",
   "personAccess.share": "Chia sẻ với tổ chức",
   "personAccess.published": "Tổ chức đã xem được người này.",
+  "personAccess.makePrivate": "Đặt ở chế độ riêng tư",
+  "personAccess.madePrivate":
+    "Người này thuộc về chủ sở hữu trở lại. Những ai đã được chia sẻ bản ghi vẫn giữ quyền truy cập.",
   "compose.reply": "Trả lời",
   "compose.writeEmail": "Viết email",
   "compose.relink": "Liên kết lại",
