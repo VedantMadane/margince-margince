@@ -26,6 +26,7 @@ import (
 
 	"github.com/margince/margince/backend/internal/platform/auth"
 	"github.com/margince/margince/backend/internal/shared/apperrors"
+	"github.com/margince/margince/backend/internal/shared/kernel/employment"
 	"github.com/margince/margince/backend/internal/shared/kernel/ids"
 	"github.com/margince/margince/backend/internal/shared/kernel/principal"
 	"github.com/margince/margince/backend/internal/shared/ports/commsauthz"
@@ -150,15 +151,7 @@ func validateInvoice(ctx context.Context, tx pgx.Tx, req commsauthz.Request, sub
 			   AND i.void_at IS NULL
 			   AND r.kind = 'employment'
 			   AND r.person_id = $2::uuid
-			   -- A DATE comparison, not a null check: somebody serving three
-			   -- months' notice still works there, and reading the column's
-			   -- presence as "gone" would take them off their employer's
-			   -- contact list the day their notice was filed. This is
-			   -- people.EmploymentIsCurrentSQL spelled out — consent may not
-			   -- import a sibling module (ADR-0054 §3), so it is ratified by
-			   -- name in the employment-currency gate alongside the five other
-			   -- statements in the same position.
-			   AND (r.ended_at IS NULL OR r.ended_at > current_date)
+			   AND `+employment.IsCurrentSQL("r.ended_at")+`
 			   AND r.archived_at IS NULL
 		)`, req.Evidence.InvoiceID)
 }
@@ -176,15 +169,7 @@ func validateContract(ctx context.Context, tx pgx.Tx, req commsauthz.Request, su
 			   AND c.archived_at IS NULL
 			   AND r.kind = 'employment'
 			   AND r.person_id = $2::uuid
-			   -- A DATE comparison, not a null check: somebody serving three
-			   -- months' notice still works there, and reading the column's
-			   -- presence as "gone" would take them off their employer's
-			   -- contact list the day their notice was filed. This is
-			   -- people.EmploymentIsCurrentSQL spelled out — consent may not
-			   -- import a sibling module (ADR-0054 §3), so it is ratified by
-			   -- name in the employment-currency gate alongside the five other
-			   -- statements in the same position.
-			   AND (r.ended_at IS NULL OR r.ended_at > current_date)
+			   AND `+employment.IsCurrentSQL("r.ended_at")+`
 			   AND r.archived_at IS NULL
 		)`, req.Evidence.ContractID)
 }
