@@ -25,6 +25,51 @@
 #     do FLUSHDB between tests — so a shared index is a corruption, not
 #     contention. See REDIS_DBS in scripts/test-integration-parallel.sh.
 
+# lane_timed_out LOG — did go test KILL this package for exceeding its budget?
+#
+# Matched on go test's OWN two spellings: the panic it raises itself, and the
+# "*** Test killed" a -timeout kill prints. NOT inferred from "the package
+# reported no tests" — a package that died for any other reason is also missing
+# its tests, and that one must still face the reconciliation rather than be
+# excused by a guess.
+#
+# BOTH ANCHORED AT THE LINE START, because go test prints them there and a TEST
+# can print them anywhere. A failing assertion quoting "*** Test killed" — this
+# lane's own harness fixtures do exactly that — would otherwise classify its
+# package as timed out and have its reconciliation entries suppressed, which is
+# the same wrong diagnosis one level down.
+lane_timed_out() { # log
+  grep -qE '^panic: test timed out after |^\*\*\* Test killed' "$1"
+}
+
+# lane_drop_timed_out DIVERGENCE TIMEDOUT — remove the reconciliation lines a
+# timeout already accounts for.
+#
+# When a package is killed, EVERY test assigned to it is missing from the run,
+# so the reconciliation reports hundreds of "assigned but not run" lines. They
+# are all true and they all have one cause, which the timeout line above already
+# named — and left in, they are the loudest thing in the output, describing the
+# sharding mechanism rather than the clock.
+#
+# ONLY that package's lines go, and only in ONE DIRECTION. A genuine discovery
+# divergence in another package of the same run has a different cause, and
+# burying it would trade one wrong diagnosis for a missing one.
+#
+# The direction matters as much as the package. A timeout explains tests that
+# were ASSIGNED AND DID NOT RUN, and nothing else. A killed package may well
+# have run some tests before it died, and one of those turning up unassigned is
+# a discovery divergence the timeout does not account for — so
+# "ran but not assigned" survives even for the package that timed out.
+lane_drop_timed_out() { # divergence-file timedout-file
+  local divergence="$1" timedout="$2" d rel
+  [[ -s "$timedout" ]] || return 0
+  while IFS='|' read -r d rel; do
+    [[ -n "$rel" ]] || continue
+    grep -vF "  assigned but not run: $d|$rel|" "$divergence" > "$divergence.keep" || true
+    mv "$divergence.keep" "$divergence"
+  done < "$timedout"
+}
+
 # resolve_test_redis: settle MARGINCE_TEST_REDIS for a lane launched from a
 # script rather than from make.
 #
