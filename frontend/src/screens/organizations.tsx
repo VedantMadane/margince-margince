@@ -2762,6 +2762,7 @@ function CompanyTasksTab({
           : (step) => (
               <TaskQuickActions
                 activityId={step.activity_id}
+                version={step.version}
                 dueAt={step.due_at}
                 update={update}
                 showComplete={false}
