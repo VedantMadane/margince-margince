@@ -26513,6 +26513,23 @@ export interface components {
              *     words either way — this is the NAME to put in them, never a sentence.
              */
             subject_label?: string | null;
+            /**
+             * @description The kind of record `subject_label` names, as the emitting source spells it:
+             *     `organization`, `person` and `activity` from the kernel's entity kinds, and
+             *     `attachment` from the document reading, which has no kernel kind. It is here so
+             *     a client can make the name a way to reach the record rather than a word in a
+             *     sentence; a client needs both this and `subject_id` before it links.
+             *
+             *     Admissible on the same ground as the label — it is the reader's own record, already
+             *     shown to them on the surface the occurrence came from. A kind the client has no
+             *     page for is drawn as text, which is what an older client does with every kind.
+             */
+            subject_type?: string | null;
+            /**
+             * Format: uuid
+             * @description That record's id, so the name can link to it.
+             */
+            subject_id?: string | null;
         };
         AgentTool: {
             /** @description The tool name (tools/list identity). */
