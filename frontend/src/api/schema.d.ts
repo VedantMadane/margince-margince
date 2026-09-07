@@ -13089,6 +13089,42 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/me/working-hours": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * When you are bookable.
+         * @description Always the CALLER's own. A person who has chosen nothing is answered with
+         *     the fallback and `chosen: false`, so a screen can offer it as a starting
+         *     point rather than show it as a decision they made.
+         */
+        get: operations["getMyWorkingHours"];
+        /**
+         * Choose the hours and days you are bookable.
+         * @description Always the CALLER's own, never anybody else's — an admin does not set a
+         *     colleague's working hours through this API, for the reason the setting
+         *     exists at all.
+         *
+         *     The times are read on the timezone sent with them, which is also stored:
+         *     it is the person's own zone and the product had no author for it before
+         *     this. Sending the browser's zone is the expected first write.
+         *
+         *     Narrowing these hours narrows what a customer can book. A screen that
+         *     does not say so at the moment of saving has built a trap rather than a
+         *     setting.
+         */
+        put: operations["saveMyWorkingHours"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/me/locale": {
         parameters: {
             query?: never;
@@ -20512,6 +20548,49 @@ export interface components {
              *     applies, because this writes the same column.
              */
             display_name: string;
+        };
+        /**
+         * @description When one person is bookable, on their own clock.
+         *
+         *     Personal, never installation-wide: people on one team sit in different
+         *     countries, some work part time, and one pair of numbers set by an admin
+         *     is wrong for most of them while the people it fails cannot change it.
+         *     This is the setting a person's display language is: their own, and
+         *     nobody else's to set.
+         *
+         *     One range on every working day rather than a range per day. The two
+         *     cases that prompted it — 8-18 Monday to Saturday, 9-13 Monday to
+         *     Thursday — are both a range plus a set of days, and per-day hours can be
+         *     added on top later without redoing this.
+         */
+        WorkingHours: {
+            /** @description The first minute of the working day, `HH:MM` on the person's own clock. */
+            start_time: string;
+            /**
+             * @description The minute the working day ends, exclusive. `24:00` is the honest
+             *     spelling of "until midnight" and is why this is not the same pattern
+             *     as `start_time`.
+             */
+            end_time: string;
+            /** @description The days worked, as ISO-8601 weekday numbers — 1 is Monday. */
+            days: number[];
+            /**
+             * @description The IANA zone the two times are read on. A person who has never
+             *     chosen one is read on the installation's reporting timezone, which
+             *     is what makes the unset case work rather than scheduling everybody
+             *     on UTC.
+             */
+            timezone: string;
+        };
+        /** @description The caller's own working hours, and whether they are theirs or the fallback. */
+        MyWorkingHoursResponse: {
+            working_hours: components["schemas"]["WorkingHours"];
+            /**
+             * @description False when nobody has chosen: the hours above are then the fallback —
+             *     09:00-17:00, Monday to Friday — and the screen should offer them as a
+             *     starting point rather than present them as a decision somebody made.
+             */
+            chosen: boolean;
         };
         SaveMyLocaleRequest: {
             /**
@@ -52689,6 +52768,53 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            422: components["responses"]["ValidationError"];
+        };
+    };
+    getMyWorkingHours: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The caller's working hours. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MyWorkingHoursResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    saveMyWorkingHours: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WorkingHours"];
+            };
+        };
+        responses: {
+            /** @description The hours as stored. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MyWorkingHoursResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
             422: components["responses"]["ValidationError"];
         };
     };
