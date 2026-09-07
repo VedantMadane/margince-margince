@@ -214,14 +214,10 @@ func (s *RetentionService) eraseActivityContent(ctx context.Context, tx pgx.Tx, 
 //
 // Held by: TestErasingAndAnonymizingClearTheSameTables (backend/gates/personscrub_test.go)
 func anonymizePersonRecord(ctx context.Context, tx pgx.Tx, id ids.UUID) error {
-	// The subject's addresses, read BEFORE person_email is deleted
-	// below. The graph structures name them by raw address as well as
-	// by person id — that is what the address arm of a participant row
-	// IS — so a sweep that only matched person_id would leave the
-	// address behind, still readable and still re-matchable. Same trap
-	// the eraser hit with the subject's NAME, one column over.
-	subjectEmails, err := collectStrings(ctx, tx,
-		`SELECT lower(email) FROM person_email WHERE person_id = $1`, id)
+	// The identifiers the graph holds the subject by, read BEFORE the deletes
+	// below destroy the rows they come from. subjectGraphIdentifiers says which
+	// they are and why the order matters.
+	subjectEmails, subjectAccounts, err := subjectGraphIdentifiers(ctx, tx, id)
 	if err != nil {
 		return err
 	}
@@ -343,7 +339,7 @@ func anonymizePersonRecord(ctx context.Context, tx pgx.Tx, id ids.UUID) error {
 			DELETE FROM capture_pending_counterparty WHERE email = ANY($1)`, subjectEmails)
 	}
 	if err == nil {
-		err = scrubPersonGraphTraces(ctx, tx, id, subjectEmails, subjectName, linkedInHandles)
+		err = scrubPersonGraphTraces(ctx, tx, id, subjectEmails, subjectAccounts, subjectName, linkedInHandles)
 	}
 	return err
 }
