@@ -115,6 +115,7 @@ var predicateContactReads = gatekit.Waive(map[string]string{
 // (platform/auth/rbac.go), so the gate would admit them anyway and the entry
 // records why asking was never the point.
 var lifecycleContactReads = gatekit.Waive(map[string]string{
+	"internal/modules/capture/replyevidence.go:AnsweredContactsTx":                      "the verdict worker's reconciling pass, under the system principal: ids, owners and addresses of owner-scoped contacts whose owner has been answered, handed straight to the promotion that re-checks them. Work to do rather than a contact anyone is shown",
 	"internal/compose/captureofflinedemo.go:fillParties":                                "the offline capture demo's fixture parties, read to seed a mailbox that has something to capture against. Demo seeding rather than a product read path",
 	"internal/modules/capture/digestcounts.go:readDigestCounts":                         "the capture lane's own pass. It runs under the capture worker's principal — or, for the surfaces a member reaches, under auth.RequireHuman bound to that member's OWN mailbox — and what it answers is work to do rather than a contact anyone was shown",
 	"internal/modules/capture/noisemailscope.go":                                        "the noise-mail scope fragment: which captured mail counts as noise, reaching the contact for liveness. A clause on the capture pass, never a projection",
@@ -177,6 +178,8 @@ var lifecycleContactReads = gatekit.Waive(map[string]string{
 // where a reviewer checks it â this census resolves gates FORWARD and cannot
 // resolve them caller-ward, because the call graph is by NAME.
 var calleeGatedContactReads = gatekit.Waive(map[string]string{
+	"internal/modules/contacts/contactvisibility.go:patchNarrowingByHand":  "the prior narrowing reason, read only to write its audit before-image. Reached from UpdateContact through guardVisibilityWrite; UpdateContact asks auth.Require(ctx, \"contact\", update) and auth.EnsureWritable on the row first",
+	"internal/modules/contacts/narrowing.go:recordNarrowingTx":             "the prior narrowing reason of the row an ensure just resolved, read to decide whether a decision may overwrite it and never returned. Its one caller is ensureContact, which asks auth.Require(ctx, \"contact\", create) first",
 	"internal/compose/contact360/commercial.go:committeeFor":               "the buying committee on a contact page: names, roles and photos of the other seats on the deal. commercialSection asks requireRead(ctx, \"contact\") — the package-local wrapper over auth.Require — before reaching it",
 	"internal/compose/introseams.go:accountContacts":                       "the contacts offered as an introduction route. Its caller asks the contact object gate before composing the seam",
 	"internal/compose/meetingbrief/meeting.go":                             "the pre-meeting brief's room statement. scopeFor asks auth.ReadGranted for each object it scopes, so a caller with no contact grant gets that join matched away; the census cannot see it because the object arrives as a PARAMETER",
