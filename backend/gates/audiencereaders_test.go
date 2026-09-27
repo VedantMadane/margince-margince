@@ -59,7 +59,7 @@ import (
 // directly, and the Ensure* probes reach it through
 // EnsureActivityContentVisible.
 var audienceScopeMarkers = []string{
-	"ActivityContentClause", "ActivityAudienceArm",
+	"ActivityContentClause", "ActivityAudienceArm", "AudienceWorkspaceOnly",
 	"EnsureActivityContentVisible", "EnsureActivityContentVisibleLive",
 	"EnsureActivityWritable",
 	// The documents library reaches the clause two hops down —

@@ -10146,6 +10146,9 @@ export const en = {
   "worklist.hidden.colleagues": "From your company’s domains",
   "worklist.hidden.colleagues.detail":
     "Treated as a colleague. A mistyped company domain can hide a real customer.",
+  "worklist.hidden.informsUs": "Judged to ask nothing",
+  "worklist.hidden.informsUs.detail":
+    "The AI read these as reports or notices. Counted for this rule alone. A request someone accepted is never hidden.",
   "worklist.hidden.notSales": "Marked not sales work",
   "worklist.hidden.notSales.detail":
     "Hidden for the whole company. This does not expire.",
@@ -10153,6 +10156,8 @@ export const en = {
   "worklist.hidden.setAside.detail":
     "Snoozed or marked not yours. Snoozed items return automatically.",
   "worklist.hidden.shown": "The Worklist shows {count}.",
+  "worklist.hidden.rows.loading": "Loading the held-back messages…",
+  "worklist.hidden.rows.empty": "Nothing is held back by this rule now.",
   "worklist.filter.label": "Work type",
   "worklist.filter.all": "All",
   "worklist.filter.customer_waiting": "Customer waiting",

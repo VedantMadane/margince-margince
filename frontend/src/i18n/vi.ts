@@ -9887,12 +9887,17 @@ export const vi = {
   "worklist.hidden.colleagues": "Từ tên miền của chính chúng ta",
   "worklist.hidden.colleagues.detail":
     "Đồng nghiệp, không phải khách hàng. Một tên miền nhập sai sẽ giấu đi thư thật.",
+  "worklist.hidden.informsUs": "Được đánh giá là không yêu cầu gì",
+  "worklist.hidden.informsUs.detail":
+    "AI đọc những thư này là báo cáo hoặc thông báo. Chỉ tính cho quy tắc này. Một yêu cầu đã được ghi nhận sẽ không bao giờ bị ẩn.",
   "worklist.hidden.notSales": "Được đánh giá không phải việc bán hàng",
   "worklist.hidden.notSales.detail": "Ẩn với toàn bộ tổ chức, và không tự bỏ.",
   "worklist.hidden.setAside": "Bạn đã gác lại",
   "worklist.hidden.setAside.detail":
     "Đã hoãn hoặc đánh dấu không phải của bạn. Một lần hoãn sẽ tự quay lại.",
   "worklist.hidden.shown": "Bản thân danh sách mang {count}.",
+  "worklist.hidden.rows.loading": "Đang tải các thư bị giữ lại…",
+  "worklist.hidden.rows.empty": "Quy tắc này hiện không giữ lại thư nào.",
   "worklist.filter.label": "Loại công việc",
   "worklist.filter.all": "Tất cả",
   "worklist.filter.customer_waiting": "Khách đang chờ",
