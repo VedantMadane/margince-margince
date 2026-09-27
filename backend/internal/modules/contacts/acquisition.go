@@ -111,6 +111,36 @@ func recordAcquisition(ctx context.Context, tx pgx.Tx, contactID ids.ContactID, 
 	return nil
 }
 
+// RecordSubjectWroteTx records, once, that an existing contact has written to
+// us — evidence that arrived after the contact was created.
+//
+// A mailbox backfill can mint a contact from our own reply and capture their
+// first mail minutes later, so the acquisition written at creation says the
+// source was unknown when it was the contact themselves. This adds the
+// subject_initiated row the creation would have written had the mails been read
+// in order; the earlier row stays, because it is a true record of what was
+// known then. A contact that already holds one gets no second.
+//
+// Its own statement rather than recordAcquisition, which belongs to creation
+// alone: this row names the MAIL that evidences it (source_entity_type/id), so
+// a later dispute can open the message the settled duty rests on. The existence
+// check and the insert are one statement; the caller holds the contact's
+// acquisition rows locked, which is what serializes two deliveries of it.
+func RecordSubjectWroteTx(
+	ctx context.Context, tx pgx.Tx, contactID ids.ContactID, mail ids.UUID, sent time.Time, capturedBy string,
+) error {
+	if _, err := tx.Exec(ctx, `
+		INSERT INTO contact_acquisition_evidence
+		       (contact_id, kind, source_entity_type, source_entity_id, occurred_at, captured_by)
+		SELECT $1, $2, 'activity', $3, $4, $5
+		 WHERE NOT EXISTS (SELECT 1 FROM contact_acquisition_evidence
+		                    WHERE contact_id = $1 AND kind = $2)`,
+		contactID, AcquiredSubjectInitiated, mail, sent, capturedBy); err != nil {
+		return fmt.Errorf("contacts: recording that this contact wrote to us: %w", err)
+	}
+	return nil
+}
+
 // acquisitionForCreate is the acquisition a typed create records: what the
 // caller declared, or — for a create stamped with the reserved import namespace,
 // which only a declared importer may write — a contact carried over from the
