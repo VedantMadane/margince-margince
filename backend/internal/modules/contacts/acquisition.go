@@ -25,6 +25,7 @@ import (
 	"github.com/jackc/pgx/v5"
 
 	"github.com/margince/margince/backend/internal/shared/kernel/ids"
+	"github.com/margince/margince/backend/internal/shared/kernel/provenance"
 )
 
 // The closed vocabulary of how a contact was obtained.
@@ -52,6 +53,12 @@ const (
 	// looked", which is exactly what this one says out loud, and it keeps the
 	// census over creation doors complete.
 	AcquiredUnknownLegacy = "unknown_legacy"
+	// AcquiredCRMMigration is a contact carried over from the CRM the
+	// installation used before. That system held it under its own notice duty,
+	// so the move opens none here. Recorded by every create stamped with the
+	// reserved import namespace (provenance.ReservedSourceSystem), which only a
+	// declared importer may write.
+	AcquiredCRMMigration = "crm_migration"
 )
 
 // Acquisition is what a creation door says about why this contact exists, and
@@ -102,4 +109,17 @@ func recordAcquisition(ctx context.Context, tx pgx.Tx, contactID ids.ContactID, 
 		return fmt.Errorf("contacts: recording how this contact was acquired: %w", err)
 	}
 	return nil
+}
+
+// acquisitionForCreate is the acquisition a typed create records: what the
+// caller declared, or — for a create stamped with the reserved import namespace,
+// which only a declared importer may write — a contact carried over from the
+// CRM used before.
+func acquisitionForCreate(in CreateContactInput) Acquisition {
+	if in.Acquisition.Kind == "" && in.SourceSystem != nil && provenance.ReservedSourceSystem(*in.SourceSystem) {
+		out := in.Acquisition
+		out.Kind = AcquiredCRMMigration
+		return out
+	}
+	return in.Acquisition
 }

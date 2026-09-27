@@ -164,7 +164,7 @@ func createContactInTx(ctx context.Context, tx pgx.Tx, in CreateContactInput, by
 		// which is the honest answer for a contact somebody typed in without
 		// saying why — and the answer that makes the gap visible rather than
 		// leaving the question unasked.
-		Acquisition: in.Acquisition,
+		Acquisition: acquisitionForCreate(in),
 		// A typed create publishes to the workspace, whoever typed it. An agent
 		// creating a contact on a rep's behalf is doing the rep's filing, and a
 		// contact only its creator can see is not in the CRM in any useful
@@ -325,18 +325,6 @@ func (s *Store) UpdateContact(ctx context.Context, id ids.ContactID, in UpdateCo
 			return err
 		}
 		storekit.SetCustomFieldPatch(p, active, in.CustomFields, current.AdditionalProperties)
-		if in.Social != nil || in.Emails != nil || in.Phones != nil {
-			// The relation replacement rides the contact row's version
-			// bump (updated_at below), so If-Match still guards it and
-			// the audit row still records the transition.
-			//
-			// Emails and Phones are in this condition for a second reason:
-			// without it a row whose ONLY change is an address or a number
-			// hits p.Empty() below and returns having written nothing, so a
-			// corrected export would report success and drop every such edit
-			// in the file.
-			p.Set("updated_at", current.UpdatedAt, time.Now().UTC())
-		}
 		if p.Empty() {
 			out = current
 			return nil
@@ -384,6 +372,9 @@ func (s *Store) UpdateContact(ctx context.Context, id ids.ContactID, in UpdateCo
 		}
 		if err := storekit.EmitEvent(ctx, tx, auditID, id.UUID, crmcontracts.PublicEventContactUpdated{ChangedFields: after}); err != nil {
 			return fmt.Errorf("emit contact.updated: %w", err)
+		}
+		if err := recheckIfRenamed(ctx, tx, id, current.FullName, in); err != nil {
+			return err
 		}
 		if out, err = readContact(ctx, tx, id, storekit.LiveOnly, active); err != nil {
 			return fmt.Errorf("read updated contact: %w", err)
@@ -444,6 +435,18 @@ func buildContactPatch(current crmcontracts.Contact, in UpdateContactInput) (*st
 		p.Set("address_region", cur.Region, in.Address.Region)
 		p.Set("address_postal_code", cur.PostalCode, in.Address.PostalCode)
 		p.Set("address_country", cur.Country, in.Address.Country)
+	}
+	if in.Social != nil || in.Emails != nil || in.Phones != nil {
+		// The relation replacement rides the contact row's version
+		// bump (updated_at below), so If-Match still guards it and
+		// the audit row still records the transition.
+		//
+		// Emails and Phones are in this condition for a second reason:
+		// without it a row whose ONLY change is an address or a number
+		// hits p.Empty() below and returns having written nothing, so a
+		// corrected export would report success and drop every such edit
+		// in the file.
+		p.Set("updated_at", current.UpdatedAt, time.Now().UTC())
 	}
 	return p, nil
 }

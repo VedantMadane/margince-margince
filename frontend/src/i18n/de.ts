@@ -5138,6 +5138,8 @@ export const de = {
     "Sie haben ein Formular ausgefüllt oder sich für etwas angemeldet.",
   "privacynotice.source.publicSource":
     "Wir haben Ihre Daten in einer öffentlichen oder geschäftlichen Quelle gefunden, etwa einem Verzeichnis oder einer Unternehmenswebsite.",
+  "privacynotice.source.crmMigration":
+    "Ihre Daten waren bereits in unserem bisherigen Kundensystem und wurden mit ihm hierher übertragen.",
   "privacynotice.source.purchasedOrImported":
     "Ihre Daten stammen aus einer gekauften oder importierten Liste.",
   "privacynotice.source.unknown":
@@ -10243,7 +10245,21 @@ export const de = {
   "worklist.untitled.relationship_decay": "Beziehung wird still",
   "worklist.untitled.failed_approval": "Freigegebene Aktion nicht ausgeführt",
   "worklist.untitled.dsr": "Offene Datenschutzanfrage",
-  "worklist.untitled.notice_case": "Dem Kontakt geschuldete Information",
+  "noticeDuty.title": "Datenschutzhinweis geschuldet (DSGVO Art. 14)",
+  "noticeDuty.what":
+    "Margince speichert Daten dieses Kontakts, hat sie aber nicht von ihm selbst: Du hast ihm geschrieben oder er stand in Kopie, und er hat dir nie geschrieben. Die DSGVO verlangt, ihn innerhalb eines Monats zu informieren, wer seine Daten hat und wozu.",
+  "noticeDuty.how":
+    "Sende den Datenschutzhinweis, frag nach einer Bestätigung der Daten (das informiert ebenfalls) oder beende die Pflicht, wenn der Kontakt schon informiert ist oder eine Ausnahme gilt.",
+  "noticeDuty.sendNotice": "Datenschutzhinweis senden",
+  "noticeDuty.askConfirm": "Bestätigung der Daten anfragen",
+  "noticeDuty.end": "Pflicht beenden…",
+  "noticeDuty.sent":
+    "An {address} gesendet. Die Pflicht ist erfüllt, sobald die Nachricht verschickt ist.",
+  "noticeDuty.notSent":
+    "Nicht gesendet: Diese Installation kann keine E-Mail an {address} senden.",
+  "noticeDuty.ended":
+    "Die Pflicht ist beendet, deine Begründung ist gespeichert.",
+  "worklist.untitled.notice_case": "Datenschutzhinweis geschuldet",
   "worklist.untitled.capture_health":
     "Postfachverbindung braucht Aufmerksamkeit",
   "worklist.untitled.ai_work_health": "KI-Arbeit muss geprüft werden",
@@ -10723,8 +10739,17 @@ export const de = {
   "magic.failingSince": "Fehlerhaft seit {when}",
   "magic.col.wayBack": "Weg zurück",
   "magic.noRecord": "Kein Datensatz genannt",
-  "magic.undo.fromHistory":
-    "Lässt sich über den Verlauf des Datensatzes zurücknehmen",
+  "magic.undo.action": "Rückgängig",
+  "magic.undo.done": "Rückgängig gemacht",
+  "magic.undo.perRecord": "Jeden Datensatz einzeln rückgängig machen",
+  "magic.records.title": "Was sich geändert hat, Datensatz für Datensatz",
+  "magic.records.show": "Was sich geändert hat",
+  "magic.records.empty": "Keiner dieser Datensätze ist noch sichtbar.",
+  "magic.records.more": "Mehr anzeigen",
+  "magic.records.fromTo": "{from} → {to}",
+  "magic.records.empty_value": "leer",
+  "magic.records.count_one": "{count} Datensatz",
+  "magic.records.count_other": "{count} Datensätze",
   "magic.undoReason.noCompletedChange":
     "Es hat sich nichts geändert, also gibt es nichts zurückzunehmen.",
   "magic.undoReason.notEvaluated":

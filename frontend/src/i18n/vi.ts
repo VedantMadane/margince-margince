@@ -5086,6 +5086,8 @@ export const vi = {
     "Quý vị đã điền một biểu mẫu hoặc đăng ký tham gia điều gì đó.",
   "privacynotice.source.publicSource":
     "Chúng tôi tìm thấy thông tin của quý vị từ nguồn công khai hoặc nguồn doanh nghiệp, chẳng hạn danh bạ hoặc trang web công ty.",
+  "privacynotice.source.crmMigration":
+    "Thông tin của quý vị đã có trong hệ thống khách hàng chúng tôi dùng trước đây và được chuyển sang đây cùng hệ thống đó.",
   "privacynotice.source.purchasedOrImported":
     "Thông tin của quý vị đến từ một danh sách được mua hoặc nhập vào.",
   "privacynotice.source.unknown":
@@ -10146,7 +10148,20 @@ export const vi = {
   "worklist.untitled.relationship_decay": "Một mối quan hệ đang nguội",
   "worklist.untitled.failed_approval": "Điều bạn duyệt đã không chạy",
   "worklist.untitled.dsr": "Một yêu cầu quyền riêng tư",
-  "worklist.untitled.notice_case": "Một thông báo cần gửi cho liên hệ này",
+  "noticeDuty.title": "Cần gửi thông báo quyền riêng tư (GDPR Điều 14)",
+  "noticeDuty.what":
+    "Margince lưu thông tin của liên hệ này nhưng không nhận từ chính họ: bạn đã viết cho họ, hoặc họ ở dòng Cc, và họ chưa từng viết cho bạn. GDPR yêu cầu thông báo cho họ trong vòng một tháng ai đang giữ dữ liệu của họ và vì sao.",
+  "noticeDuty.how":
+    "Gửi thông báo quyền riêng tư, đề nghị họ xác nhận thông tin (việc này cũng thông báo cho họ), hoặc kết thúc nghĩa vụ nếu họ đã biết hoặc có ngoại lệ.",
+  "noticeDuty.sendNotice": "Gửi thông báo quyền riêng tư",
+  "noticeDuty.askConfirm": "Đề nghị họ xác nhận thông tin",
+  "noticeDuty.end": "Kết thúc nghĩa vụ…",
+  "noticeDuty.sent":
+    "Đã gửi tới {address}. Nghĩa vụ hoàn tất khi thư được gửi đi.",
+  "noticeDuty.notSent":
+    "Chưa gửi: hệ thống này không thể gửi thư tới {address}.",
+  "noticeDuty.ended": "Nghĩa vụ đã kết thúc, lý do của bạn đã được lưu.",
+  "worklist.untitled.notice_case": "Cần gửi thông báo quyền riêng tư",
   "worklist.untitled.capture_health": "Kết nối hộp thư cần chú ý",
   "worklist.untitled.ai_work_health": "Công việc AI cần xem lại",
   "worklist.untitled.bounce": "Một email không đến nơi",
@@ -10611,7 +10626,17 @@ export const vi = {
   "magic.failingSince": "Lỗi từ {when}",
   "magic.col.wayBack": "Cách hoàn tác",
   "magic.noRecord": "Không nêu bản ghi nào",
-  "magic.undo.fromHistory": "Có thể hoàn tác từ lịch sử của bản ghi",
+  "magic.undo.action": "Hoàn tác",
+  "magic.undo.done": "Đã hoàn tác",
+  "magic.undo.perRecord": "Hoàn tác từng bản ghi bên trong",
+  "magic.records.title": "Những gì đã thay đổi, theo từng bản ghi",
+  "magic.records.show": "Những gì đã thay đổi",
+  "magic.records.empty": "Không còn bản ghi nào trong số này hiển thị.",
+  "magic.records.more": "Xem thêm",
+  "magic.records.fromTo": "từ {from} thành {to}",
+  "magic.records.empty_value": "trống",
+  "magic.records.count_one": "{count} bản ghi",
+  "magic.records.count_other": "{count} bản ghi",
   "magic.undoReason.noCompletedChange":
     "Không có gì thay đổi nên không có gì để hoàn tác.",
   "magic.undoReason.notEvaluated":
