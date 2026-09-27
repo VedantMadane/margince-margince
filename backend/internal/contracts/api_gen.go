@@ -16123,6 +16123,27 @@ func (e WorklistScopeOptions) Valid() bool {
 	}
 }
 
+// Defines values for WorklistTeamWeek.
+const (
+	WorklistTeamWeekEveryTeam WorklistTeamWeek = "every_team"
+	WorklistTeamWeekNone      WorklistTeamWeek = "none"
+	WorklistTeamWeekTeamsLed  WorklistTeamWeek = "teams_led"
+)
+
+// Valid indicates whether the value is a known member of the WorklistTeamWeek enum.
+func (e WorklistTeamWeek) Valid() bool {
+	switch e {
+	case WorklistTeamWeekEveryTeam:
+		return true
+	case WorklistTeamWeekNone:
+		return true
+	case WorklistTeamWeekTeamsLed:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for WorklistBandBand.
 const (
 	WorklistBandBandBuildPipeline WorklistBandBand = "build_pipeline"
@@ -41231,6 +41252,15 @@ type Worklist struct {
 	// parts to add up to the whole they are shown beside.
 	Summary WorklistSummary `json:"summary"`
 
+	// TeamWeek Which teams' frozen weeks `GET /weekly-reviews/team` will open for this reader,
+	// answered by the rule that endpoint is served on. `every_team` for a seat holding
+	// `team_oversight.read`; `teams_led` for a lead, who opens the teams they are on;
+	// `none` for everyone else, a read-only seat included. Separate from
+	// `scope_options`, because the `team` worklist is the team's live work and the
+	// week is a lead's verdict on named colleagues. Absent from an older server, which
+	// a client reads as `none`.
+	TeamWeek *WorklistTeamWeek `json:"team_week,omitempty"`
+
 	// Walk What has happened to this walk since it started.
 	//
 	// A walk is frozen at its first page: the rows it covers and the order they sit in
@@ -41257,6 +41287,15 @@ type WorklistScope string
 
 // WorklistScopeOptions defines model for Worklist.ScopeOptions.
 type WorklistScopeOptions string
+
+// WorklistTeamWeek Which teams' frozen weeks `GET /weekly-reviews/team` will open for this reader,
+// answered by the rule that endpoint is served on. `every_team` for a seat holding
+// `team_oversight.read`; `teams_led` for a lead, who opens the teams they are on;
+// `none` for everyone else, a read-only seat included. Separate from
+// `scope_options`, because the `team` worklist is the team's live work and the
+// week is a lead's verdict on named colleagues. Absent from an older server, which
+// a client reads as `none`.
+type WorklistTeamWeek string
 
 // WorklistBand One outcome band and how much of it this page is showing — the headings a client draws,
 // in the order it draws them.
