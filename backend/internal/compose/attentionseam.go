@@ -198,7 +198,7 @@ func newAttentionService(pool *pgxpool.Pool, svc *approvals.Service, now attenti
 		// a reader accepts from a meeting. A promise a rep made is then real
 		// data the queue was still refusing to show.
 		attentionCommitments{store: contacts.NewStore(db)},
-		attentionAtRisk{lister: quietDealScan(pool, deals.QuietThresholdDays), pool: pool},
+		attentionAtRisk{lister: quietDealScanWithClock(pool, deals.QuietThresholdDays, now), pool: pool, now: now},
 		attentionDecay{pool: pool, store: contacts.NewStore(db), now: now},
 		attentionMeetings{store: activities.NewStore(db)},
 		attentionFailedEffects{svc: svc},
@@ -245,7 +245,8 @@ func newAttentionService(pool *pgxpool.Pool, svc *approvals.Service, now attenti
 	).WithWaiting(attentionWaiting{
 		store: activities.NewStore(db).WithOwnDomains(
 			ownDomainReader{store: capture.NewOwnDomainStore(db)}),
-		now: now,
+		deals: deals.NewStore(db, DealsInstallation()),
+		now:   now,
 	}).
 		// The reader's own override. The ranking has carried a pin level since
 		// it was written and nothing could set it, so the one control that says

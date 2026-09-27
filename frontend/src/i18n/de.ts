@@ -5309,6 +5309,7 @@ export const de = {
   "retention.scopeAiCallPayloadContent": "Nutzdaten von KI-Aufrufen",
 
   "retention.scopeRawCapture": "Gespeicherte Originalnachrichten",
+  "retention.scopeDealRiskDay": "Tagesvermerk wichtiger gefährdeter Deals",
   "settings.pipelines": "Pipelines",
   "settings.pipelinesReadOnly":
     "Nur Lesezugriff. Deine Rolle darf Pipelines und Phasen nicht ändern.",

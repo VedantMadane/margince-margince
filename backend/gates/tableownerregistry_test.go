@@ -136,6 +136,11 @@ var tableOwners = map[string]string{
 	// has since taken it back. NOT a second audit ledger — the audit row owns
 	// the before/after images and this row points at it.
 	"deal_correction": "internal/modules/deals",
+	// The day's first risk pass and the deals it judged material and at risk.
+	// Written by compose's hourly pass through deals.RecordRiskDay; the day is
+	// aged out by the retention engine and its verdicts go with it.
+	"deal_risk_day":     "internal/modules/deals",
+	"deal_risk_verdict": "internal/modules/deals",
 	// The project is its own bounded context, superseding ADR-0073 — see
 	// modules/projects/doc.go. This entry is what makes that a rule rather than
 	// a layout: a statement writing either table from any other package fails

@@ -19,6 +19,7 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 
 	crmcontracts "github.com/margince/margince/backend/internal/contracts"
+	"github.com/margince/margince/backend/internal/platform/database/storekit"
 	"github.com/margince/margince/backend/internal/shared/apperrors"
 	"github.com/margince/margince/backend/internal/shared/kernel/ids"
 )
@@ -55,21 +56,56 @@ type Waiting interface {
 	// rows are the difference the figure reports, so a list assembled anywhere
 	// else could name rows the count never counted.
 	HiddenRows(ctx context.Context, asOf time.Time, rule string) ([]WaitingCustomer, error)
-	// Answered says how fast the workspace replied over a window, and how much
-	// of the queue it put down instead.
+	// Answered says how fast the workspace replied over a window, how much of
+	// the queue it put down instead, and how often a material at-risk deal got
+	// a next step booked the same day.
 	//
-	// On this seam for the reason Hidden is: both are questions about the same
-	// waiting work, and a seam of their own would let an installation bind a
-	// queue and a measurement that disagree about which threads are sales.
-	Answered(ctx context.Context, from, to time.Time) (AnsweredWork, error)
+	// On this seam for the reason Hidden is: the first two are questions about
+	// the same waiting work, and a seam of their own would let an installation
+	// bind a queue and a measurement that disagree about which threads are
+	// sales. The third rides along so /worklist/response is one read, and is
+	// counted over the whole local days the window holds.
+	Answered(ctx context.Context, from, to time.Time, days LocalDays) (AnsweredWork, error)
 }
 
-// AnsweredWork is what the workspace did with its waiting work over a window.
+// LocalDays is a run of whole calendar days in the installation's zone:
+// [First, End), each a date at UTC midnight.
+type LocalDays struct {
+	First, End time.Time
+}
+
+// wholeDaysWithin answers the local days lying wholly inside [from, to).
+//
+// The first day starts at or after from, and the run stops before the day to
+// falls on: that day is still running, and a next step can still be booked on
+// it. A window shorter than a day can hold none.
+func wholeDaysWithin(from, to time.Time, zone *time.Location) LocalDays {
+	first := storekit.WorkspaceDay(from, zone)
+	local := from.In(zone)
+	if !time.Date(local.Year(), local.Month(), local.Day(), 0, 0, 0, 0, zone).Equal(local) {
+		first = first.AddDate(0, 0, 1)
+	}
+	end := storekit.WorkspaceDay(to, zone)
+	if end.Before(first) {
+		end = first
+	}
+	return LocalDays{First: first, End: end}
+}
+
+// AnsweredWork is what the workspace did with its work over a window.
 type AnsweredWork struct {
 	Answered         int
 	MedianMinutes    int
 	Disposed         int
 	DisposedNotSales int
+	// The same-day next-step figure over the LocalDays the seam was asked for.
+	// AtRiskWithheld says the caller may not read the money it was judged by,
+	// and the figure is not stated at all.
+	AtRiskWithheld bool
+	AtRiskJudged   int
+	AtRiskBooked   int
+	// RecordedSince is the first day a verdict is on record; nil for none.
+	RecordedSince *time.Time
 }
 
 // HiddenWork is how much waiting work each rule is holding back, and whether
@@ -329,7 +365,12 @@ const responseWindowDays = 14
 // honest window rather than an unbounded scan.
 const responseWindowMaxDays = 90
 
-// ResponseMetrics answers how fast the workspace replies, over a window.
+// ResponseMetrics answers how fast the workspace replies, over a window, and
+// how often a material at-risk deal gets a next step the same day.
+//
+// These are the worklist's success metrics. Finite-queue completion was named
+// beside them and is dropped rather than pending: it would need a record of
+// what each rep's queue held, which the product does not keep.
 //
 // A projection over the seam, like HiddenBacklog: the arithmetic is a median
 // and a filtered count in SQL, and computing either here would need this
@@ -354,11 +395,16 @@ func (s *Service) ResponseMetrics(
 	}
 	to := s.now()
 	from := to.AddDate(0, 0, -days)
+	zone, err := s.location(ctx)
+	if err != nil {
+		return crmcontracts.ResponseMetrics{}, err
+	}
+	whole := wholeDaysWithin(from, to, zone)
 	out := crmcontracts.ResponseMetrics{From: from, To: to}
 	if s.waiting == nil {
 		return out, nil
 	}
-	work, err := s.waiting.Answered(ctx, from, to)
+	work, err := s.waiting.Answered(ctx, from, to, whole)
 	if err != nil {
 		return crmcontracts.ResponseMetrics{}, err
 	}
@@ -366,5 +412,20 @@ func (s *Service) ResponseMetrics(
 	out.MedianMinutes = work.MedianMinutes
 	out.Disposed = work.Disposed
 	out.DisposedNotSales = work.DisposedNotSales
+	if !work.AtRiskWithheld {
+		stateAtRisk(&out, whole, work)
+	}
 	return out, nil
+}
+
+// stateAtRisk writes the same-day next-step group. All of it or none of it:
+// a withheld figure leaves every field absent rather than zero.
+func stateAtRisk(out *crmcontracts.ResponseMetrics, whole LocalDays, work AnsweredWork) {
+	judged, booked := work.AtRiskJudged, work.AtRiskBooked
+	out.AtRiskJudged, out.AtRiskBookedSameDay = &judged, &booked
+	out.AtRiskFromDay = &openapi_types.Date{Time: whole.First}
+	out.AtRiskToDay = &openapi_types.Date{Time: whole.End}
+	if work.RecordedSince != nil {
+		out.AtRiskRecordedSince = &openapi_types.Date{Time: *work.RecordedSince}
+	}
 }

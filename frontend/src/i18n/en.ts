@@ -5473,6 +5473,7 @@ export const en = {
   "retention.scopeAiCallPayloadContent": "AI call payloads",
 
   "retention.scopeRawCapture": "Stored message originals",
+  "retention.scopeDealRiskDay": "Daily record of material deals at risk",
   "settings.pipelines": "Pipelines",
   "settings.pipelinesReadOnly":
     "Read-only. Your role cannot change pipelines or stages.",
