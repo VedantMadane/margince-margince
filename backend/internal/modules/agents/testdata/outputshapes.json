@@ -9490,6 +9490,9 @@
               "type": "string"
             }
           },
+          "population_narrowed": {
+            "type": "string"
+          },
           "rows": {
             "type": "array",
             "items": {
@@ -9620,6 +9623,9 @@
           },
           "plan": {
             "type": "object"
+          },
+          "population_narrowed": {
+            "type": "string"
           },
           "report": {
             "type": "string"
