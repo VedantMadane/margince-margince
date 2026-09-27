@@ -175,6 +175,9 @@ type API interface {
 	// folder, against which a message's ParentFolderID identifies mail the
 	// authenticated owner sent.
 	SentFolderID(ctx context.Context, accessToken string) (string, error)
+	// ListFolders returns the mailbox's folders — what an owner may pick from
+	// to keep one out of capture.
+	ListFolders(ctx context.Context, accessToken string) ([]connector.NamedContainer, error)
 
 	// SendMIME transmits one complete RFC822 message as the signed-in user.
 	// Microsoft acknowledges the submission without naming a message id, so
