@@ -82,6 +82,7 @@ import { CaptureActivityTab } from "./capture-activity";
 import { OwnerIdentitiesCard } from "./capture-owner-identities";
 import { CaptureSendersCard } from "./capture-senders";
 import { CaptureSettingsCard } from "./capture-settings";
+import { CaptureHealthCard } from "./capturehealth";
 import {
   LoadMoreButton,
   problemMessageOf,
@@ -368,10 +369,9 @@ export function tabContent(id: SettingsPageId): ReactNode {
               page. */}
           <EmbedReindexCard />
           <JobHealthCard />
-          {/* Beside the queue reading rather than under Extensions: both
-              answer "is something broken in the background", and an operator
-              chasing a quiet feed should not have to know that a connector is
-              an extension to find out. */}
+          {/* Beside the queue reading, not under Capture or Extensions: each
+              answers "is something broken in the background". */}
+          <CaptureHealthCard />
           <ExtensionIngestHealthCard />
         </>
       );
