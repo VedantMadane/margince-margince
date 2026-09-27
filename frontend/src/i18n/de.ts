@@ -1504,6 +1504,7 @@ export const de = {
   "co.partial":
     "Einige Bereiche wurden nicht geladen, daher ist diese Seite möglicherweise unvollständig.",
   "evidence.explain": "Herkunft von „{value}“",
+  "evidence.explainBeside": "{label}: Herkunft von „{value}“",
   "evidence.fullHistory": "Vollständiger Verlauf",
   "co.section.unavailable":
     "Einige Daten wurden nicht geladen, daher ist dieser Bereich möglicherweise unvollständig.",
@@ -3635,6 +3636,8 @@ export const de = {
   "today.workQueue": "Worklist",
 
   "evidence.mark": "gelesen",
+
+  "evidence.bought": "gekauft",
   "evidence.confirm": "Bestätigen",
   "evidence.correct": "Korrigieren",
   "evidence.save": "Speichern",
@@ -9134,19 +9137,7 @@ export const de = {
   "contact.bandBadge.weak": "Schwach",
   "contact.bandBadge.moderate": "Mittel",
   "contact.bandBadge.strong": "Stark",
-  "contact.identity.title": "Identität",
-  "contact.identity.emailDead":
-    "Unzustellbar. E-Mails an diese Adresse werden nicht zugestellt.",
-  "contact.identity.email": "E-Mail",
-  "contact.identity.phone": "Telefon",
-  "contact.identity.currentRole": "Aktuelle Rolle",
-  "contact.identity.buyingRole": "Rolle im Kaufprozess",
-  "contact.career.title": "Frühere Rollen",
-  "contact.consent.title": "Einwilligung für ausgehende Nachrichten",
-  "contact.consent.allowed": "Erlaubt: {purposes}",
-  "contact.consent.noneGranted":
-    "Für keinen Zweck ist eine Einwilligung erteilt, daher sind ausgehende Nachrichten blockiert.",
-  "contact.consent.blocked": "Blockiert: {purposes}",
+  "contact.bought.from": "Bei {provider} gekauft",
   "contact.network.title": "Teammitglieder, die diesen Kontakt kennen",
 
   "contact.page.loading": "Wird geladen…",
