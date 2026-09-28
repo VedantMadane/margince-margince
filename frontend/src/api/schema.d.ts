@@ -46982,6 +46982,26 @@ export interface operations {
                          *     capped list read as complete is how a caller concludes there is no later opening.
                          */
                         truncated: boolean;
+                        /**
+                         * @description What these slots were computed FROM, which decides what an empty window means.
+                         *
+                         *     `calendar` — THESE slots were read off the host's connected calendar, so a
+                         *     busy period is one their diary actually holds. Only `reliable=true` consults
+                         *     it; a host having connected one is a different fact and does not earn this
+                         *     value. `none` — no calendar is connected for them, so the window is this
+                         *     CRM's own records and says nothing about the rest of their day. `unknown` —
+                         *     this answer cannot say: the host is somebody else, whose connector state is
+                         *     not this answer's to report, or the window was computed without consulting a
+                         *     calendar. Never proof that another host was identified.
+                         *
+                         *     Declared because the two are indistinguishable without it: a full grid of free
+                         *     slots reads as an empty diary, and a reader told that concludes a meeting the
+                         *     host actually has is not happening. The `check_availability` tool carries the
+                         *     same field with the same values — the two surfaces do not get to disagree
+                         *     about what an answer means.
+                         * @enum {string}
+                         */
+                        calendar_backing?: "calendar" | "none" | "unknown";
                     };
                 };
             };
