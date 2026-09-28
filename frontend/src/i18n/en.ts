@@ -3077,6 +3077,8 @@ export const en = {
   "bulk.assign": "Assign owner",
   "bulk.archive": "Archive",
   "bulk.titleReassign": "Change owner of selected {unit}?",
+  "bulk.titleUndo": "Undo the change to these {unit}?",
+  "bulk.confirmUndo": "Undo change",
   "bulk.titleArchive": "Archive selected {unit}?",
   "bulk.checking": "Checking the selection…",
   "bulk.affects_one": "This changes {count} of the {total} selected records.",
@@ -3100,6 +3102,12 @@ export const en = {
   "bulk.reason.anchor_company": "Your own company is never archived",
   "bulk.reason.refused": "Not allowed for this record",
   "bulk.reason.not_previewed": "Not in the confirmed preview",
+  "bulk.reason.changed_since_batch": "Changed since the change you are undoing",
+  "bulk.reason.merged": "Merged into another record",
+  "bulk.reason.erased": "Its personal data was erased",
+  "bulk.reason.value_taken":
+    "Its email or domain now belongs to another record",
+  "bulk.reason.no_previous_owner": "Had no owner before",
   "bulk.refusal.sole_project_company": "Only company on a live project",
   "bulk.refusal.locked": "Under a legal or retention hold",
   "bulk.refusal.anchor_protected": "Your own company is protected",
@@ -3114,6 +3122,16 @@ export const en = {
   "bulk.doneDeals_other": "{count} deals changed.",
   "bulk.doneSkipped_one": "{count} was left unchanged.",
   "bulk.doneSkipped_other": "{count} were left unchanged.",
+  "bulk.undoneContacts_one": "{count} contact put back.",
+  "bulk.undoneContacts_other": "{count} contacts put back.",
+  "bulk.undoneCompanies_one": "{count} company put back.",
+  "bulk.undoneCompanies_other": "{count} companies put back.",
+  "bulk.undoneDeals_one": "{count} deal put back.",
+  "bulk.undoneDeals_other": "{count} deals put back.",
+  "bulk.undoLeftBehind_one":
+    "{count} link, tag or list membership could not come back.",
+  "bulk.undoLeftBehind_other":
+    "{count} links, tags or list memberships could not come back.",
 
   "deal.offers": "Offers",
   "deal.newOffer": "New offer",

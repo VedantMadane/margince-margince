@@ -2994,6 +2994,8 @@ export const vi = {
   "bulk.assign": "Giao người phụ trách",
   "bulk.archive": "Lưu trữ",
   "bulk.titleReassign": "Đổi người phụ trách cho {unit} đã chọn?",
+  "bulk.titleUndo": "Hoàn tác thay đổi với các {unit} này?",
+  "bulk.confirmUndo": "Hoàn tác thay đổi",
   "bulk.titleArchive": "Lưu trữ {unit} đã chọn?",
   "bulk.checking": "Đang kiểm tra lựa chọn…",
   "bulk.affects_one": "Thay đổi {count} trên {total} mục đã chọn.",
@@ -3017,6 +3019,12 @@ export const vi = {
   "bulk.reason.anchor_company": "Công ty của bạn không bao giờ bị lưu trữ",
   "bulk.reason.refused": "Không được phép với bản ghi này",
   "bulk.reason.not_previewed": "Không có trong bản xem trước đã xác nhận",
+  "bulk.reason.changed_since_batch":
+    "Đã thay đổi sau lần thay đổi đang hoàn tác",
+  "bulk.reason.merged": "Đã gộp vào bản ghi khác",
+  "bulk.reason.erased": "Dữ liệu cá nhân đã bị xóa",
+  "bulk.reason.value_taken": "Email hoặc tên miền giờ thuộc về bản ghi khác",
+  "bulk.reason.no_previous_owner": "Trước đó không có người phụ trách",
   "bulk.refusal.sole_project_company":
     "Công ty duy nhất của một dự án đang chạy",
   "bulk.refusal.locked": "Đang bị giữ theo yêu cầu pháp lý hoặc lưu giữ",
@@ -3032,6 +3040,16 @@ export const vi = {
   "bulk.doneDeals_other": "Đã thay đổi {count} deal.",
   "bulk.doneSkipped_one": "{count} bản ghi được giữ nguyên.",
   "bulk.doneSkipped_other": "{count} bản ghi được giữ nguyên.",
+  "bulk.undoneContacts_one": "Đã hoàn tác {count} liên hệ.",
+  "bulk.undoneContacts_other": "Đã hoàn tác {count} liên hệ.",
+  "bulk.undoneCompanies_one": "Đã hoàn tác {count} công ty.",
+  "bulk.undoneCompanies_other": "Đã hoàn tác {count} công ty.",
+  "bulk.undoneDeals_one": "Đã hoàn tác {count} deal.",
+  "bulk.undoneDeals_other": "Đã hoàn tác {count} deal.",
+  "bulk.undoLeftBehind_one":
+    "{count} liên kết, thẻ hoặc mục trong danh sách không khôi phục được.",
+  "bulk.undoLeftBehind_other":
+    "{count} liên kết, thẻ hoặc mục trong danh sách không khôi phục được.",
 
   "deal.offers": "Báo giá",
   "deal.newOffer": "Báo giá mới",
