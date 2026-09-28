@@ -18348,6 +18348,37 @@ export interface components {
             anonymised: number;
             /** @description True when nothing was actually done. */
             preview: boolean;
+            kept: components["schemas"]["CaptureKeptBreakdown"];
+        };
+        /**
+         * @description Why the skipped messages were skipped. The three counts are disjoint and sum to `skipped`.
+         *     Reported because the count alone tells an owner that something survived their deletion and
+         *     not what would have to change for it to go: a hold lifts when somebody lifts it, a statutory
+         *     window expires on a date, an open request closes when it is finished.
+         */
+        CaptureKeptBreakdown: {
+            /** @description Messages an erasure or a controller pinned by hand. */
+            held: number;
+            /** @description Messages inside their commercial-retention window — correspondence the law still requires keeping. */
+            under_statute: number;
+            /** @description Messages a data-subject request is still about, and which it needs in order to be answered. */
+            under_request: number;
+            /**
+             * @description The retention class that shielded them, named only when it kept something — a reader
+             *     shown a rule beside a zero would reasonably think it applied to their deletion.
+             */
+            statutory_class?: string;
+            /**
+             * @description How many years that class keeps its records, as a number the reader's own copy renders.
+             *     Absent when the compiled-in packs declare a period that is not whole years, because a
+             *     screen that rounded one would misstate how long somebody's mail is held.
+             */
+            statutory_years?: number;
+            /**
+             * @description True when the period counts from the end of the calendar year rather than from the
+             *     message's own date — the difference between "six years" and "up to seven".
+             */
+            statutory_from_year_end?: boolean;
         };
         CaptureExclusion: {
             /** Format: uuid */

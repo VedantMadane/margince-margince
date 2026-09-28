@@ -8730,6 +8730,46 @@ export const de = {
   "captureExclusions.kind.domain": "Domain",
   "captureExclusions.kind.container": "Label, Ordner oder Postfach",
   "captureExclusions.scopeLabel": "Gilt für",
+  "capturePurge.open": "Bereits erfasste Post von {value} löschen",
+  "capturePurge.title": "Bereits erfasste Post von {value} löschen?",
+  "capturePurge.intro":
+    "Das vernichtet die Nachrichten, auf die diese Regel bereits zugetroffen hat: Text, Original, Anhänge und alles daraus Abgeleitete. Das lässt sich nicht rückgängig machen. Sieh dir zuerst an, was wegfiele.",
+  "capturePurge.preview": "Erst prüfen",
+  "capturePurge.confirm": "Endgültig löschen",
+  "capturePurge.done": "Schließen",
+  "capturePurge.failed": "Die Löschung lief nicht",
+  "capturePurge.wouldDestroy_one": "{count} Nachricht würde vernichtet.",
+  "capturePurge.wouldDestroy_other": "{count} Nachrichten würden vernichtet.",
+  "capturePurge.destroyed_one": "{count} Nachricht vernichtet.",
+  "capturePurge.destroyed_other": "{count} Nachrichten vernichtet.",
+  "capturePurge.released_one":
+    "{count} Nachricht haben auch Mitarbeitende erfasst. Dein Zugriff darauf endet; deren Kopie bleibt.",
+  "capturePurge.released_other":
+    "{count} Nachrichten haben auch Mitarbeitende erfasst. Dein Zugriff darauf endet; deren Kopie bleibt.",
+  "capturePurge.anonymised_one":
+    "Bei {count} Kontakt wurden die identifizierenden Angaben entfernt, denn nur deine Post war der Grund, warum das CRM ihn kannte.",
+  "capturePurge.anonymised_other":
+    "Bei {count} Kontakten wurden die identifizierenden Angaben entfernt, denn nur deine Post war der Grund, warum das CRM sie kannte.",
+  "capturePurge.keptHeld_one":
+    "{count} Nachricht bleibt erhalten: sie ist angeheftet und bleibt, bis das aufgehoben wird.",
+  "capturePurge.keptHeld_other":
+    "{count} Nachrichten bleiben erhalten: sie sind angeheftet und bleiben, bis das aufgehoben wird.",
+  "capturePurge.keptStatute_one":
+    "{count} Nachricht bleibt als Handelsbrief erhalten, den du nicht löschen darfst.",
+  "capturePurge.keptStatute_other":
+    "{count} Nachrichten bleiben als Handelsbriefe erhalten, die du nicht löschen darfst.",
+  "capturePurge.keptFor_one":
+    "Das Gesetz verlangt, ihn {years} Jahr aufzubewahren.",
+  "capturePurge.keptFor_other":
+    "Das Gesetz verlangt, ihn {years} Jahre aufzubewahren.",
+  "capturePurge.keptForFromYearEnd_one":
+    "Das Gesetz verlangt, ihn {years} Jahr nach Ablauf des Kalenderjahres aufzubewahren, in dem er eingegangen ist.",
+  "capturePurge.keptForFromYearEnd_other":
+    "Das Gesetz verlangt, ihn {years} Jahre nach Ablauf des Kalenderjahres aufzubewahren, in dem er eingegangen ist.",
+  "capturePurge.keptRequest_one":
+    "{count} Nachricht bleibt erhalten: eine datenschutzrechtliche Anfrage wird noch bearbeitet und braucht sie.",
+  "capturePurge.keptRequest_other":
+    "{count} Nachrichten bleiben erhalten: eine datenschutzrechtliche Anfrage wird noch bearbeitet und braucht sie.",
   "captureExclusions.containerLabel": "Ordner oder Label",
   "captureExclusions.noContainers":
     "Dieses Postfach hat keine Ordner gemeldet. Verbinde ein Postfach mit Ordnern, oder schließe Absender nach Adresse oder Domain aus.",

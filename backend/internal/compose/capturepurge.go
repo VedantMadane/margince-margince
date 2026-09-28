@@ -54,6 +54,12 @@ type PurgeOutcome struct {
 	Anonymised int `json:"anonymised"`
 	// Preview reports that nothing was actually done.
 	Preview bool `json:"preview"`
+	// Kept says WHY the skipped messages were skipped. Skipped alone tells an
+	// owner that something survived their deletion and not what would have to
+	// change for it to go — and the three reasons answer differently: a hold
+	// lifts when somebody lifts it, a statutory window expires on a date, an
+	// open request closes when it is finished.
+	Kept KeptBreakdown `json:"kept"`
 }
 
 // CapturePurger destroys what one seat's exclusion rule matched.
@@ -133,6 +139,7 @@ func (p *CapturePurger) Purge(ctx context.Context, exclusionID ids.UUID, preview
 		Skipped:    len(subject.Restricted),
 		Anonymised: len(contacts),
 		Preview:    preview,
+		Kept:       keptBreakdown(subject),
 	}
 	if preview {
 		return outcome, nil
@@ -142,6 +149,21 @@ func (p *CapturePurger) Purge(ctx context.Context, exclusionID ids.UUID, preview
 		reason = privacy.PurgeWorkspaceRule
 	}
 	if err := p.carryOut(ctx, subject, contacts, actor.UserID, reason); err != nil {
+		return PurgeOutcome{}, err
+	}
+	// AFTER the cascade, deliberately. Written first it would certify a plan
+	// rather than an act: carryOut commits per item, so a run that failed
+	// halfway would leave a receipt claiming everything went. Written here it
+	// records a cascade that finished.
+	//
+	// The residue is the opposite order's: this write can fail after the
+	// destruction committed, and then the purge answers an error with no
+	// summary row. That is the better failure of the two — the per-activity
+	// rows the cascade wrote are still there, so the trail is short a summary
+	// rather than carrying a false one, and a caller told it failed is told
+	// something true. Making neither possible needs a durable pending receipt
+	// finalized after the cascade, which is #6378.
+	if err := p.auditPurgeReceipt(ctx, exclusionID, outcome); err != nil {
 		return PurgeOutcome{}, err
 	}
 	return outcome, nil
