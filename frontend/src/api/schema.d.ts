@@ -12081,10 +12081,39 @@ export interface paths {
          * @description Creates an active member with the chosen system role and no password, then issues a
          *     single-use set-password token. When an email sender is configured the invite link is
          *     mailed to the new address; otherwise the member sets a password through the standard
-         *     account-recovery flow. Admin-only (`role: admin`); an agent may never provision a human.
-         *     Emits `user.invited`.
+         *     account-recovery flow. Needs `user_admin.create`; an agent may never provision a human.
+         *     Naming `team_ids` puts the member on those teams, which only an admin may do: any other
+         *     caller gets 403 `team_membership_requires_admin`. Emits `user.invited`.
          */
         post: operations["inviteUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/assignable-roles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The live roles this caller may hand out when inviting or re-roling a member.
+         * @description The invite form's and the role picker's list. Gated on `user_admin` create or update,
+         *     not on `role_admin`: a member administrator hands roles out without editing them.
+         *
+         *     Each role listed is one the assignment ceiling admits for this caller — the same
+         *     check `inviteUser` and `changeUserRole` run. For a caller who is not an admin that
+         *     ceiling is containment: the caller must already hold every grant the stored role
+         *     document names (extension grants included), its row scope and every field it reads.
+         *     It is an offer, not a promise: the writes also check the teams the account will be
+         *     on and the member being re-roled. Ordered by key.
+         */
+        get: operations["listAssignableRoles"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -12320,25 +12349,13 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List the workspace's roles with their object grants. Admin-only, human-only.
-         * @description The role editor's read. Every role the workspace defines — the five seeded system
+         * List the workspace's roles with their object grants and row scope. Human-only.
+         * @description The role editor's read. Every live role the workspace defines — the six seeded system
          *     roles and any custom ones — with the `objects` map exactly as `role.permissions`
-         *     stores it.
+         *     stores it. Archived roles are left out unless `include_archived` is true.
          *
-         *     Admin-only, and not because a grant map is a secret: it is the same authority
-         *     `changeUserRole` carries, and an admin is the only caller who can act on it. Agents
-         *     are refused outright — no autonomy tier makes rewriting the permission model an
-         *     agent's call.
-         *
-         *     Gated on the admin ROLE, not on an RBAC object, and there is deliberately no `role`
-         *     entry in `RbacObject`. That is the posture every identity-administration surface here
-         *     takes (`/users`, `/teams`), for the reason recorded against them: object RBAC exists
-         *     to narrow WHO among peers may touch a record, and there is no such narrowing to
-         *     express here — no role but `admin` should ever hold it, so the grant map would encode
-         *     a constant, at the cost of a backfill of every already-seeded workspace's
-         *     `role.permissions`. It would also be circular: an admin who revoked their own grant on
-         *     `role` could never restore it. A client gates this screen on the caller holding
-         *     `admin` (`/me`'s `roles`), the same way it gates the member roster.
+         *     Gated on `role_admin.read`. Agents are refused outright — no autonomy tier makes
+         *     rewriting the permission model an agent's call.
          *
          *     The `objects` map is returned VERBATIM from the stored document, including any object
          *     this installation no longer knows (a unit that was removed). `policy.Parse` drops such
@@ -12349,7 +12366,103 @@ export interface paths {
          */
         get: operations["listRoles"];
         put?: never;
+        /**
+         * Create a role by copying an existing one. Human-only.
+         * @description A new role starts as an exact copy of `copy_from`: the stored permissions document
+         *     as it is, grants on objects this installation cannot name included, and the source
+         *     role's field masks. It gets a generated key (`custom_<slug of the name>`, never a
+         *     seeded key, never changed afterwards) and `is_system: false`.
+         *
+         *     Admin only (403 `widening_requires_admin` for any other holder of `role_admin.create`):
+         *     a new role is authority nobody held before. In this version only an admin may widen
+         *     what a role grants; other holders of `role_admin` may rename, narrow and archive.
+         *
+         *     No public event: the closed catalog has no role-definition type. The audit row
+         *     names the new role, its source and its name.
+         */
+        post: operations["createRole"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/roles/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The role key — not its id. */
+                key: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Rename a role or change its row scope. Human-only.
+         * @description Gated on `role_admin.update`. Renaming and narrowing the row scope are open to every
+         *     holder of the grant. Widening the row scope is admin only (403
+         *     `widening_requires_admin`): it reaches every holder's teams at once.
+         *
+         *     Send the `version` you read in `If-Match`; a stale one is refused 409 `version_skew`.
+         *     The audit row carries the before and after of each changed field.
+         */
+        patch: operations["updateRole"];
+        trace?: never;
+    };
+    "/roles/{key}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Archive a custom role nobody who can sign in holds. Human-only.
+         * @description Gated on `role_admin.delete`. An archived role grants nothing, cannot be assigned and
+         *     drops out of `listRoles`; its grants and field masks are kept for `restoreRole`.
+         *     Archiving an archived role is a no-op.
+         *
+         *     Refused 409 `system_role` for a role the product ships, and 409 `role_in_use` while an
+         *     active or invited member holds it — give them another role first. A deactivated or
+         *     suspended member may keep holding it, and gets nothing from it.
+         */
+        post: operations["archiveRole"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/roles/{key}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Restore an archived role. Human-only.
+         * @description Admin only (403 `widening_requires_admin` for any other holder of `role_admin.delete`):
+         *     restoring hands the role's grants back to every member still holding it. The role
+         *     comes back with the grants and field masks it had. Restoring a live role is a no-op.
+         *     Refused 409 `role_name_taken` when a live role has taken its name in the meantime;
+         *     rename that one first.
+         */
+        post: operations["restoreRole"];
         delete?: never;
         options?: never;
         head?: never;
@@ -12397,6 +12510,13 @@ export interface paths {
          *     because refusing stored data costs a member their session; on this WRITE path the
          *     opposite is true — refusing input an admin just typed costs them a correction, and
          *     storing a typo would create a grant nobody can ever satisfy and no screen can explain.
+         *
+         *     Gated on `role_admin.update`. Turning a verb OFF is open to every holder of the grant.
+         *     Turning one ON is admin only (403 `widening_requires_admin`), which is also how a newly
+         *     installed extension's objects are first granted. The
+         *     seeded `admin` role's grants on the administration objects cannot be narrowed (409
+         *     `admin_role_floor`), because an installation whose admin role lost `role_admin` or
+         *     `user_admin` could not be administered back.
          *
          *     Concurrency: `role` is a versioned row, so send the `version` you read in `If-Match`
          *     and a write against a stale read is refused 409 `version_skew` rather than silently
@@ -12463,7 +12583,11 @@ export interface paths {
          */
         get: operations["listTeams"];
         put?: never;
-        /** Create a team. Admin only. */
+        /**
+         * Create a team. Needs `team_admin.create`.
+         * @description A new team has no members, so it changes nobody's reach; any holder of
+         *     `team_admin.create` may create one. Only an admin puts anybody on it.
+         */
         post: operations["createTeam"];
         delete?: never;
         options?: never;
@@ -12487,7 +12611,13 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        /** Rename, archive or restore a team. Admin only. */
+        /**
+         * Rename, archive or restore a team.
+         * @description Renaming needs `team_admin.update`. Archiving or restoring switches every member's
+         *     team reach off or on, so it is admin only, like every other change to who is on a
+         *     team: a holder of `team_admin` who is not an admin gets 403
+         *     `team_membership_requires_admin`.
+         */
         patch: operations["updateTeam"];
         trace?: never;
     };
@@ -12507,10 +12637,18 @@ export interface paths {
          * Put a member on a team. Admin only; idempotent.
          * @description Membership resolves `row_scope: team` and team shares from the next request on. Members of
          *     the team may edit records owned by anyone on it.
+         *
+         *     Only an admin changes who is on a team. A holder of `team_admin.update` who is not an
+         *     admin gets 403 `team_membership_requires_admin`, for themselves as for anybody else.
          */
         put: operations["addTeamMember"];
         post?: never;
-        /** Take a member off a team. Admin only; idempotent. */
+        /**
+         * Take a member off a team. Admin only; idempotent.
+         * @description Removing a member ends their team reach and who leads or coaches them there, so it is
+         *     admin only too: 403 `team_membership_requires_admin` for any other holder of
+         *     `team_admin.update`.
+         */
         delete: operations["removeTeamMember"];
         options?: never;
         head?: never;
@@ -29109,11 +29247,10 @@ export interface components {
             email: string;
             display_name: string;
             /**
-             * @description Defaults to `rep`. A deactivated seat exercises no authority whatever its role, so this records what they were rather than granting anything — but the caller may still not name a role they could not assign themselves.
+             * @description A live role's key. Defaults to `rep`. A deactivated seat exercises no authority whatever its role, so this records what they were rather than granting anything — but the caller may still not name a role they could not assign themselves.
              * @default rep
-             * @enum {string}
              */
-            role: "admin" | "management" | "manager" | "rep" | "read_only" | "ops";
+            role: string;
             /**
              * Format: date-time
              * @description When they left, when the source system knows it. Recorded on the audit row.
@@ -29127,15 +29264,12 @@ export interface components {
             /** Format: email */
             email: string;
             display_name: string;
-            /**
-             * @description System role key (ADR-0110). Keys are wire vocabulary and diverge from the product names on purpose — `manager` displays as "Team Lead", `rep` as "User"; `management` is the whole-company seat that holds no admin power.
-             * @enum {string}
-             */
-            role: "admin" | "management" | "manager" | "rep" | "read_only" | "ops";
+            /** @description A live role's key: one of the seeded system roles or one made with `createRole`. Seeded keys are wire vocabulary and diverge from the product names on purpose — `manager` displays as "Team Lead", `rep` as "User"; `management` is the whole-company seat that holds no admin power. A caller who is not an admin may only produce an account whose whole access their own contains — every grant, row scope, team and readable field — because the set-password link goes to an address the caller chooses. `listAssignableRoles` names the roles this caller may hand out. */
+            role: string;
             /** @description The teams the member joins on arrival, in the same transaction as the seat and the role. A team-scoped role (`manager`, `rep`) with no team sees and edits only its own records; the access preview says what a given role + teams will see before the invite is sent. */
             team_ids?: string[];
         };
-        /** @description What a seat with this role and these teams may do — computed by the server from the evaluated policy, the same one the gates read, so the screen never interprets the role a second way. Used before an invite (`POST /users/access-preview`) and for an existing member (`GET /users/{id}/access`). */
+        /** @description What a seat with this role and these teams may do — computed by the server from the evaluated policy, the same one the gates read, so the screen never interprets the role a second way. Used before an invite (`GET /users/access-preview`) and for an existing member (`GET /users/{id}/access`). */
         AccessPreview: {
             role: string;
             /**
@@ -29189,8 +29323,8 @@ export interface components {
             expires_at: string;
         };
         ChangeUserRoleRequest: {
-            /** @enum {string} */
-            role: "admin" | "management" | "manager" | "rep" | "read_only" | "ops";
+            /** @description A live role's key; see `InviteUserRequest.role`. */
+            role: string;
         };
         DeactivateUserRequest: {
             /** @description Optional operator note that rides the user.deactivated event. */
@@ -30160,7 +30294,7 @@ export interface components {
          *     The SERVER does not derive from it. `identity/internal/policy.coreObjects` is maintained separately (oapi-codegen emits nothing for a top-level standalone string enum, so there are no generated Go constants to derive from), and a typo there is an ordinary runtime value, not a compile error. What keeps the two honest is a merge-blocking parity test, `backend/gates/rbacvocabulary_test.go`, which holds this enum equal to that list. Editing this enum alone changes what clients can express, never what the server enforces — change both, and the gate will say so if you do not.
          * @enum {string}
          */
-        RbacObject: "contact" | "company" | "deal" | "lead" | "activity" | "pipeline" | "list" | "tag" | "relationship" | "partner" | "automation" | "voice_profile" | "product" | "offer" | "signal" | "saved_view" | "custom_field" | "computed_field" | "offer_template" | "embedding_reindex" | "webhook_subscription" | "fx_rate" | "ai_model_rate" | "capture_settings" | "project" | "channel_connection" | "import_run" | "installation_settings" | "finance" | "integrations" | "retention_policy" | "capture_trace" | "license" | "contract" | "ai_routing" | "ai_budget" | "commission" | "deal_room" | "knowledge_corpus" | "knowledge_document" | "introduction" | "weekly_plan" | "forecast" | "data_coverage" | "user_admin" | "role_admin" | "team_admin" | "privacy_request" | "audit_log" | "job_health" | "extension_access" | "system_reset" | "ai_diagnostics" | "consent_config" | "communication_exception" | "authentication_policy" | "oauth_application" | "seat_usage" | "team_oversight";
+        RbacObject: "contact" | "company" | "deal" | "lead" | "activity" | "pipeline" | "list" | "tag" | "relationship" | "partner" | "automation" | "voice_profile" | "product" | "offer" | "signal" | "saved_view" | "custom_field" | "computed_field" | "offer_template" | "embedding_reindex" | "webhook_subscription" | "fx_rate" | "ai_model_rate" | "capture_settings" | "project" | "channel_connection" | "import_run" | "installation_settings" | "finance" | "integrations" | "retention_policy" | "capture_trace" | "license" | "contract" | "ai_routing" | "ai_budget" | "commission" | "deal_room" | "knowledge_corpus" | "knowledge_document" | "introduction" | "weekly_plan" | "forecast" | "data_coverage" | "user_admin" | "role_admin" | "team_admin" | "privacy_request" | "audit_log" | "job_health" | "extension_access" | "system_reset" | "ai_diagnostics" | "consent_config" | "communication_exception" | "authentication_policy" | "oauth_application" | "seat_usage" | "team_oversight" | "team_lead";
         /**
          * @description The four object-level verbs a grant carries (data-model §2.4). These are RBAC actions, not HTTP methods: the seat ceiling is clamped on the method independently, and the two diverge in both directions — a read-seat GET that the object grants, and a mutating route whose RBAC action is `read`.
          * @enum {string}
@@ -30226,10 +30360,43 @@ export interface components {
             objects: {
                 [key: string]: components["schemas"]["RbacObjectGrant"];
             };
+            /**
+             * @description Whose records the grants reach: the holder's own, those of everyone sharing a live team with them, or every record. A document storing none reads as `own`, the narrowest, which is how authentication reads it too.
+             * @enum {string}
+             */
+            row_scope: "own" | "team" | "all";
+            /**
+             * Format: date-time
+             * @description When the role was archived. Absent or null for a live role.
+             */
+            archived_at?: string | null;
         };
-        /** @description Every role this workspace defines. Not paginated and deliberately not: the set is bounded by what an operator created (five seeded, plus a handful at most), the editor needs all of it to render, and a cursor over it would be ceremony over a complete answer. */
+        /** @description Every role this workspace defines. Not paginated and deliberately not: the set is bounded by what an operator created (six seeded, plus a handful at most), the editor needs all of it to render, and a cursor over it would be ceremony over a complete answer. */
         RoleDirectory: {
             roles: components["schemas"]["Role"][];
+        };
+        AssignableRoleDirectory: {
+            roles: components["schemas"]["AssignableRole"][];
+        };
+        AssignableRole: {
+            /** @description The role key an invite or a role change sends. */
+            key: string;
+            /** @description The role's name as stored. A client shows a seeded role under its own translated label and a custom role under this. */
+            name: string;
+            /** @description True for a role the product ships. */
+            is_system: boolean;
+        };
+        CreateRoleRequest: {
+            /** @description The key of the live role the new one starts as a copy of. */
+            copy_from: string;
+            /** @description The new role's name. Unique among live roles, ignoring case. */
+            name: string;
+        };
+        /** @description A sparse patch. An absent field is left as it is. */
+        UpdateRoleRequest: {
+            name?: string;
+            /** @enum {string} */
+            row_scope?: "own" | "team" | "all";
         };
         /** @description The role's new CRUD on the addressed object. All four verbs are REQUIRED: this is a replacement of one object's grant, not a sparse patch, so an omitted verb would have to mean either "leave it" or "revoke it" and the two are indistinguishable on the wire. Sending all four false is the supported way to revoke a grant entirely. */
         SetRoleObjectGrantRequest: {
@@ -39141,6 +39308,15 @@ export interface operations {
                 };
             };
             401: components["responses"]["Unauthorized"];
+            /** @description `archived_role_held` — the caller holds an archived role and gets no new credential until an admin gives them a live role. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
             422: components["responses"]["ValidationError"];
         };
     };
@@ -56562,7 +56738,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
-            /** @description Not found, with the reason distinguished by the problem `code`: `unknown_role` — this company defines no role with the requested key. The `role` enum is documentation, not binding validation, so a mistyped key reaches the server and must say which of the two things was not found. */
+            /** @description Not found, with the reason distinguished by the problem `code`: `unknown_role` — this company defines no live role with the requested key. An archived role answers the same: it cannot be given to anybody. */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -56583,10 +56759,33 @@ export interface operations {
             422: components["responses"]["ValidationError"];
         };
     };
+    listAssignableRoles: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The roles this caller may assign. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssignableRoleDirectory"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
     previewAccess: {
         parameters: {
             query: {
-                role: "admin" | "management" | "manager" | "rep" | "read_only" | "ops";
+                /** @description A live role's key — a seeded one or one made with `createRole`. */
+                role: string;
                 team_ids?: string[];
             };
             header?: never;
@@ -56667,7 +56866,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
-            /** @description `unknown_role` — this company defines no role with the requested key. The enum is documentation rather than binding validation, so a mistyped key reaches the server. */
+            /** @description `unknown_role` — this company defines no live role with the requested key. */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -56806,7 +57005,7 @@ export interface operations {
                 };
             };
             404: components["responses"]["NotFound"];
-            /** @description Refused with `code: not_deactivated` — only a deactivated member can be reactivated, and this one is in some other state. Both reachable states need a different action, not this one: an `invited` member has never set a password, and a `suspended` member is held for a reason that reactivating would clear without it ever being resolved. (An `active` member is a no-op and answers 200, not this.) */
+            /** @description Refused with `code: not_deactivated` — only a deactivated member can be reactivated, and this one is in some other state. Both reachable states need a different action, not this one: an `invited` member has never set a password, and a `suspended` member is held for a reason that reactivating would clear without it ever being resolved. (An `active` member is a no-op and answers 200, not this.) Or `archived_role_held` — the member still holds an archived role, which would hand the account its grants back the moment the role is restored; an admin gives them a live role first. */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -56843,7 +57042,7 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
-            /** @description Refused, with the reason distinguished by the problem `code`: `public_base_url_unset` (no canonical base to build a link against — an operator configuration gap), or `member_not_active` (the member is suspended or deactivated, so redemption would refuse the link this call would mint). */
+            /** @description Refused, with the reason distinguished by the problem `code`: `public_base_url_unset` (no canonical base to build a link against — an operator configuration gap), `member_not_active` (the member is suspended or deactivated, so redemption would refuse the link this call would mint), or `archived_role_held` (the member holds an archived role; an admin gives them a live role first). */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -56865,7 +57064,10 @@ export interface operations {
     };
     listRoles: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description True also lists archived roles, each carrying `archived_at`. */
+                include_archived?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -56883,6 +57085,192 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+        };
+    };
+    createRole: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateRoleRequest"];
+            };
+        };
+        responses: {
+            /** @description The new role. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Role"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description `unknown_role` — no live role has the `copy_from` key. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description `role_name_taken` — a live role already has this name. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            422: components["responses"]["ValidationError"];
+        };
+    };
+    updateRole: {
+        parameters: {
+            query?: never;
+            header?: {
+                /**
+                 * @description Optional optimistic-concurrency precondition for a mutating request (PATCH/advance/merge):
+                 *     the last-seen entity `version`. If the row's current `version` differs, the write is
+                 *     rejected with `409 code: version_skew` (ErrVersionSkew) and no change is made — re-read,
+                 *     re-apply, retry. Omitting it is last-write-wins (discouraged for agent/automated writers).
+                 *     Accepted on every native (SoR-mode) mutating endpoint that returns a versioned entity.
+                 */
+                "If-Match"?: components["parameters"]["IfMatch"];
+            };
+            path: {
+                /** @description The role key — not its id. */
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateRoleRequest"];
+            };
+        };
+        responses: {
+            /** @description The updated role. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Role"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description `unknown_role` — no live role has this key. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description `version_skew` — somebody changed the role since it was read; or `role_name_taken` — a live role already has this name. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            422: components["responses"]["ValidationError"];
+        };
+    };
+    archiveRole: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The archived role. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Role"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description `unknown_role` — no role has this key. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description `system_role` or `role_in_use`, as described above. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    restoreRole: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The restored role. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Role"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description `unknown_role` — no role has this key. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description `role_name_taken` — a live role already has this name. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
         };
     };
     setRoleObjectGrant: {
@@ -56932,7 +57320,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
-            /** @description Refused with `code: version_skew` — the `If-Match` version is not the role's current one, so somebody else changed this role since it was read. Nothing was written; re-read the role, re-apply, retry. */
+            /** @description Refused with `code: version_skew` — the `If-Match` version is not the role's current one, so somebody else changed this role since it was read. Nothing was written; re-read the role, re-apply, retry. Or `admin_role_floor`, as above. */
             409: {
                 headers: {
                     [name: string]: unknown;
