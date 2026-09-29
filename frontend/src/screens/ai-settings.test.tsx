@@ -112,7 +112,12 @@ function backendFor(
   allow: GrantSpec,
   fail: { usage?: boolean; keys?: boolean } = {},
   routing: unknown = ROUTING,
-  reads: { usage?: unknown; calls?: unknown[]; callsFail?: boolean } = {},
+  reads: {
+    usage?: unknown;
+    calls?: unknown[];
+    callsFail?: boolean;
+    keys?: unknown;
+  } = {},
 ) {
   return vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const req =
@@ -128,7 +133,7 @@ function backendFor(
     if (req.url.includes("/ai/provider-keys")) {
       return fail.keys
         ? jsonResponse({ title: "upstream" }, 500)
-        : jsonResponse(KEYS);
+        : jsonResponse(reads.keys ?? KEYS);
     }
     if (req.url.includes("/ai/routing")) {
       return jsonResponse(routing);
@@ -180,6 +185,11 @@ afterEach(() => {
 // the confirm dialog that guarded a routing draft across a shared address —
 // behaviour that no longer exists, because leaving the routing page is an
 // address change the app's own unsaved guard sees.
+
+// Anchored and case-exact: `formatTokens` owns the K/M/B markers, so the ICU
+// build Node ships cannot move this string.
+const TOKENS_READING = /^214K of 1M$/;
+
 const BothStats = () => (
   <>
     <SpendStat />
@@ -216,11 +226,43 @@ describe("the AI readings", () => {
     // figure and the unit is in the label; the money is the estimate priced on
     // read and rides the line under it.
     expect(screen.getByText(en["aiSettings.spend.label"])).toBeTruthy();
-    expect(await screen.findByText("214k of 1m")).toBeTruthy();
+    expect(await screen.findByText(TOKENS_READING)).toBeTruthy();
     expect(screen.getByText(/US\$4\.12 spent/)).toBeTruthy();
     // One vendor keyed OUT OF the vendors this installation knows about, and
     // the one the routing binds without a key named as the thing to act on.
     expect(await screen.findByText("1 of 2")).toBeTruthy();
+    expect(await screen.findByText(/1 bound, no key/)).toBeTruthy();
+  });
+
+  // The decision model is bound apart from the tiers, and TypeSafe's own API
+  // demands its key like any vendor; a jev_compatible key is optional, so a
+  // lane on it counts toward nothing missing.
+  it("counts the decision model's key as bound, unless that key is optional", async () => {
+    const keys = (optional: boolean, provider: string) => ({
+      providers: [
+        ...KEYS.providers,
+        { provider, configured: false, env_var: "K", optional },
+      ],
+    });
+    const routing = (provider: string) => ({
+      ...ROUTING,
+      decisions: { provider, model: "m" },
+    });
+    vi.stubGlobal(
+      "fetch",
+      backendFor(OPERATOR, {}, routing("jev"), { keys: keys(false, "jev") }),
+    );
+    const official = render(<BothStats />);
+    expect(await screen.findByText(/2 bound, no key/)).toBeTruthy();
+    official.unmount();
+
+    vi.stubGlobal(
+      "fetch",
+      backendFor(OPERATOR, {}, routing("jev_compatible"), {
+        keys: keys(true, "jev_compatible"),
+      }),
+    );
+    render(<BothStats />);
     expect(await screen.findByText(/1 bound, no key/)).toBeTruthy();
   });
 
@@ -248,7 +290,7 @@ describe("the AI readings", () => {
     vi.stubGlobal("fetch", backendFor(BOTH_READINGS));
     render(<BothStats />);
 
-    expect(await screen.findByText("214k of 1m")).toBeTruthy();
+    expect(await screen.findByText(TOKENS_READING)).toBeTruthy();
     expect(await screen.findByText("1 of 2")).toBeTruthy();
     expect(screen.queryByText("Restricted")).toBeNull();
   });
@@ -276,7 +318,7 @@ describe("the AI readings", () => {
     );
     render(<SpendStat />);
 
-    expect(await screen.findByText("214k of 1m")).toBeTruthy();
+    expect(await screen.findByText(TOKENS_READING)).toBeTruthy();
     expect(screen.getByText(en["aiSettings.spend.notPriced"])).toBeTruthy();
     expect(screen.queryByText(/spent/)).toBeNull();
   });

@@ -3,6 +3,7 @@ import type { RbacAction, RbacObject } from "../app/capability";
 import { type GrantSpec, meFixture } from "../app/mefixture";
 import { translate } from "../i18n";
 import {
+  available,
   type CapabilityExpression,
   holds,
   readingIsTheAct,
@@ -66,8 +67,10 @@ describe("the scope each page declares", () => {
   const DECLARED_SCOPE: Record<SettingsPageId, SettingsScope> = {
     // Wholly the reader's own.
     account: "self",
+    meetings: "self",
     voice: "self",
     agents: "self",
+    notifications: "self",
 
     // Pages whose cards genuinely split across two scopes. `integrations`
     // is one: PATCH /integrations/settings is "the installation's
@@ -101,6 +104,8 @@ describe("the scope each page declares", () => {
     // One workspace's state.
     members: "workspace",
     teams: "workspace",
+    // PATCH /roles/{key} and its siblings — one workspace's roles.
+    roles: "workspace",
     pipelines: "workspace",
     stageautomation: "workspace",
     leads: "workspace",
@@ -189,7 +194,9 @@ describe("what each page lets a reader change", () => {
   const DECLARED_CHANGES: Record<SettingsPageId, string> = {
     // The reader's own rows, with no grant between them and the control.
     account: "always",
+    meetings: "always",
     agents: "always",
+    notifications: "always",
     connections: "always",
     "capture-activity": "always",
     // Under the reader's own heading and still a grant: voice-dna.tsx asks the
@@ -198,7 +205,7 @@ describe("what each page lets a reader change", () => {
       "all(full-seat, any(any(voice_profile:update, voice_profile:create)))",
 
     company:
-      "all(full-seat, any(any(installation_settings:update), all(any(company:update, company:create), available:company_context), any(fx_rate:update, fx_rate:create)))",
+      "all(full-seat, any(any(installation_settings:update), any(fx_rate:update, fx_rate:create)))",
     // The OAuth cards save through `capture_settings`, a different grant from
     // the sign-in card's.
     authentication:
@@ -207,6 +214,9 @@ describe("what each page lets a reader change", () => {
     members:
       "all(full-seat, any(any(user_admin:update, user_admin:create), user_admin:delete))",
     teams: "all(full-seat, any(any(team_admin:update, team_admin:create)))",
+    // Create, edit, and archive or restore, which the server gates on delete.
+    roles:
+      "all(full-seat, any(any(role_admin:update, role_admin:create), role_admin:delete))",
     seats: "same-as-requires",
 
     pipelines:
@@ -364,8 +374,10 @@ describe("who may open what", () => {
     // first paint.
     expect(visibleIds(nobody)).toEqual([
       "account",
+      "meetings",
       "voice",
       "agents",
+      "notifications",
       "connections",
       "capture-activity",
     ]);
@@ -524,49 +536,46 @@ describe("who may open what", () => {
   });
 });
 
-describe("requirements that are not permissions", () => {
-  it("withholds the company page when the installation lacks the surface", () => {
-    // company.update alone. The company profile ANDs its grant with a
-    // deployment flag, so a reader holding only that grant sees nothing when
-    // the flag is off — the surface may genuinely not exist here.
-    const holder = meFixture({
-      allow: { company: ["read", "update"] },
-      settingsAvailability: { company_context: false },
-    });
-    expect(visibleSettingsPages(holder).map((p) => p.id)).not.toContain(
-      "company",
-    );
-  });
+describe("who reaches the company page", () => {
+  // The company profile is administered: the server asks the admin role for
+  // its read and its write, so a `company` grant carries nobody onto the page
+  // that holds it, whatever the installation says about the surface.
+  it.each([true, false])(
+    "withholds it from a company writer while company_context is %s",
+    (companyContext) => {
+      const writer = meFixture({
+        roles: ["rep"],
+        allow: { company: ["create", "read", "update"] },
+        settingsAvailability: { company_context: companyContext },
+      });
+      expect(visibleSettingsPages(writer).map((p) => p.id)).not.toContain(
+        "company",
+      );
+    },
+  );
 
-  it("shows it once the installation has it", () => {
-    const holder = meFixture({
-      allow: { company: ["read", "update"] },
-      settingsAvailability: { company_context: true },
-    });
-    expect(visibleSettingsPages(holder).map((p) => p.id)).toContain("company");
-  });
-
-  it("withholds it when /me carries no availability at all", () => {
-    // A server older than the field, or a snapshot cached before it shipped.
-    // Absent is not permission: it has to read as "no such surface here".
-    const holder = meFixture({
-      allow: { company: ["read", "update"] },
-      settingsAvailability: null,
-    });
-    expect(visibleSettingsPages(holder).map((p) => p.id)).not.toContain(
-      "company",
-    );
-  });
-
-  it("still shows it to a reader whose OTHER grant carries the page", () => {
-    // The flag gates one card, not the page: installation_settings.update opens
-    // the company page regardless, and treating the flag as a page-level
-    // condition would hide a surface the reader may use.
-    const admin = meFixture({
+  it("opens it to the installation writer, whatever company_context says", () => {
+    const operator = meFixture({
+      roles: ["ops"],
       allow: { installation_settings: ["read", "update"] },
       settingsAvailability: { company_context: false },
     });
-    expect(visibleSettingsPages(admin).map((p) => p.id)).toContain("company");
+    expect(visibleSettingsPages(operator).map((p) => p.id)).toContain(
+      "company",
+    );
+  });
+});
+
+describe("requirements that are not permissions", () => {
+  // A server older than the field, or a snapshot cached before it shipped.
+  // Absent is not permission: it has to read as "no such surface here".
+  it("reads an availability /me does not carry as absent", () => {
+    const present = meFixture({
+      settingsAvailability: { embedding_reindex: true },
+    });
+    const older = meFixture({ settingsAvailability: null });
+    expect(holds(available("embedding_reindex"), present)).toBe(true);
+    expect(holds(available("embedding_reindex"), older)).toBe(false);
   });
 });
 
@@ -901,21 +910,21 @@ describe("what the rail carries and what it leaves behind", () => {
     },
   });
 
+  // Company is absent: its profile is the admin's, and a rep holds neither
+  // grant that opens the page (the catalog's `company` entry).
   it("gives a rep the pages they work in, and only those", () => {
     const reach = settingsReach(seededRep);
     expect(reach.acts.map((page) => page.id)).toEqual([
-      // Their own five, minus Voice — a rep holds voice_profile create and
+      // Their own six, minus Voice — a rep holds voice_profile create and
       // update, so Voice IS theirs; it is here for that reason and not because
       // the page sits under their own heading.
       "account",
+      "meetings",
       "voice",
       "agents",
+      "notifications",
       "connections",
       "capture-activity",
-      // The company profile the AI reads: a rep holds `company` create and
-      // update, which is what CompanyContextCard asks. Existing behaviour that
-      // the rail is only now reporting — the card was always editable by them.
-      "company",
       // The outcome-review questions. A rep holds `custom_field:read`, and this
       // page is read-only, so it is theirs to CONSULT — they are the ones asked
       // these questions when a deal closes, and the page is where they can see

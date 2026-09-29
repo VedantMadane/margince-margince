@@ -50,14 +50,16 @@ const PAGE_PATHS = new Set(
 );
 
 // The stories that are ABOUT a settings SURFACE rather than a card on a page,
-// named exactly. Two segments each, because neither names a catalog page: the
-// tree itself, and the settings home together with the boundary the same address
-// answers when its segment names no page this reader can open (`SETTINGS_HOME_ID`
-// is deliberately not a member of SETTINGS_PAGES). An
+// named exactly. Two segments each, because none names a catalog page: the
+// tree itself, the sidebar's settings level, and the settings home together with
+// the boundary the same address answers when its segment names no page this
+// reader can open (`SETTINGS_HOME_ID` is deliberately not a member of
+// SETTINGS_PAGES). An
 // `if (page === undefined) return` would exempt every two-segment title —
 // `Settings/Nonsense` included — which is a skip-list with no list.
 const SURFACE_STORIES = new Set([
   "Settings/Settings screen",
+  "Settings/Settings navigation",
   "Settings/Settings home",
 ]);
 
@@ -78,6 +80,11 @@ const ACROSS_PAGE_STORIES = new Set([
   "Settings/Across pages/Rates and model costs",
   "Settings/Across pages/AI readings",
   "Settings/Across pages/Refresh from sources",
+  // The units an installation composed: the manifest's declared secret scope
+  // decides whether a unit is offered on a member's own Connections page or
+  // under Integrations, so the card is one subject that both pages mount and
+  // filing it under either would say the other page does not offer it.
+  "Settings/Across pages/Units offered in settings",
 ]);
 
 const settingsStories = storyFilesUnder(SCREENS)
@@ -102,18 +109,9 @@ describe("the settings stories are filed where the product files them", () => {
   // story whose title stops resolving, or whose root is edited away from
   // `Settings/`, drops out of the filtered corpus and is never checked again.
   // So the count is EXACT and derived from the tree: adding or removing a
-  // settings story is a deliberate edit to this number. 80 → 83 for
-  // `You/Connections/Backfill run`, `Data/Capture rules/Refused domain
-  // decision` and `You/Capture activity/Pipeline drawer`; 83 → 86 for
-  // `Across pages/Refresh from sources`, `Governance/Privacy &
-  // retention/Corrections` and `Governance/Privacy & retention/Retention policy
-  // form`; 86 → 87 for `AI/Automations/Automation form`; 87 → 88 for
-  // `Governance/Privacy & retention/Notice duties`; 88 → 89 for
-  // `Governance/Privacy & retention/Linked case notice`; 89 → 90 for
-  // `AI/Automations/Date field picker`; 90 → 91 for `Governance/System
-  // health/Connector records refused`.
+  // settings story file is a deliberate edit to this number.
   it("reads every settings story, and says how many that is", () => {
-    expect(settingsStories.length).toBe(91);
+    expect(settingsStories.length).toBe(106);
   });
 
   // The filter above drops a file whose title does not resolve. That is the

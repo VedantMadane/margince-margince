@@ -4,7 +4,13 @@
 /** @vitest-environment happy-dom */
 import "@testing-library/jest-dom/vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, expect, it, vi } from "vitest";
 import { type GrantSpec, meFixture } from "../app/mefixture";
@@ -78,12 +84,18 @@ function mount(
 it("explains pooled tokens, UTC reset and unchanged model selection", async () => {
   mount();
   expect(
-    await screen.findByText(/22,453,486 of 24,000,000 tokens/),
+    await screen.findByText(/22\.5M of 24M tokens used · 94%/),
+  ).toBeTruthy();
+  expect(screen.getByText(/1\.5M tokens remaining/)).toBeTruthy();
+  expect(
+    screen.getByText("Active full users: 2 × 12M tokens per user per month."),
   ).toBeTruthy();
   expect(
-    screen.getByText(/not an individual quota or a dollar spending cap/),
+    screen.getByText(/Not an individual quota or a dollar spending cap/),
   ).toBeTruthy();
-  expect(await screen.findByText("Same model selection")).toBeTruthy();
+  expect(await screen.findByText("gemini · example-model")).toBeTruthy();
+  expect(screen.queryByText("Same model selection")).toBeNull();
+  expect(screen.queryByRole("columnheader", { name: "Effect" })).toBeNull();
   expect(screen.getByText(/UTC/)).toBeTruthy();
   expect(screen.queryByText(/own hardware/)).toBeNull();
 });
@@ -126,16 +138,14 @@ it("keeps a rejected draft visible after a concurrent edit", async () => {
     ).not.toBeDisabled(),
   );
   await user.click(screen.getByRole("button", { name: "Save allowance" }));
-  expect(
-    await screen.findByText("The change could not be applied"),
-  ).toBeTruthy();
+  expect(await screen.findByText("Change not applied")).toBeTruthy();
   expect(screen.getByLabelText("Tokens per full user per month")).toHaveValue(
     "12000000",
   );
 });
 it("allows management to read without offering an editor", async () => {
   mount({ ai_budget: ["read"], ai_diagnostics: ["read"] });
-  await screen.findByText(/22,453,486 of 24,000,000 tokens/);
+  await screen.findByText(/22\.5M of 24M tokens used/);
   expect(screen.queryByRole("button", { name: "Edit allowance" })).toBeNull();
 });
 
@@ -151,23 +161,28 @@ it.each([
   expect(await screen.findByText("AI by activity")).toBeTruthy();
   expect(
     screen.getByText(
-      "Only a reader who holds both AI diagnostics read and AI allowance read can see which features are live right now.",
+      "Only a user with both AI diagnostics read and AI allowance read can see which features are live now.",
     ),
   ).toBeTruthy();
   expect(screen.queryByRole("table")).toBeNull();
 });
 
-it("edits the normal leading tier while the effective tier is demoted", async () => {
-  const onEdit = vi.fn();
+// A task's tier is fixed by the task contract, and what the tier is bound to
+// is edited on the Model tiers card — so the task table offers no edit of its
+// own, only the resolved chain and where the task sits in the contract.
+it("reads a task's resolved chain with no edit control", async () => {
   render(
     <LocaleProvider initial="en">
-      <AiFeatureTable rows={[feature]} onEdit={onEdit} />
+      <AiFeatureTable rows={[feature]} />
     </LocaleProvider>,
   );
   const user = userEvent.setup({ delay: null });
+  expect(
+    screen.getByText(`${feature.task} · ${feature.execution_mode}`),
+  ).toBeTruthy();
   await user.click(screen.getByText("gemini · example-model"));
-  await user.click(screen.getByRole("button", { name: "Edit shared binding" }));
-  expect(onEdit).toHaveBeenCalledWith("cheap_cloud");
+  expect(screen.queryByRole("button")).toBeNull();
+  expect(screen.queryByText(/edit shared binding/i)).toBeNull();
 });
 it("explains each routing impact in operational language", () => {
   render(
@@ -188,6 +203,12 @@ it("explains each routing impact in operational language", () => {
           },
           {
             ...feature,
+            task: "decision",
+            display_name: "Decision activity",
+            impact: "decision_changed",
+          },
+          {
+            ...feature,
             task: "fallback",
             display_name: "Fallback activity",
             impact: "fallback_changed",
@@ -205,12 +226,13 @@ it("explains each routing impact in operational language", () => {
 
   expect(screen.getByText("Waiting on allowance")).toBeTruthy();
   expect(screen.getByText("Different model selected")).toBeTruthy();
+  expect(screen.getByText("Decision model changed")).toBeTruthy();
   expect(screen.getByText("Fallback chain changed")).toBeTruthy();
   expect(screen.getByText("No model configured")).toBeTruthy();
 });
 it("withholds model identities from an allowance reader without routing access", async () => {
   mount({ ai_budget: ["read"], ai_diagnostics: ["read"] });
-  await screen.findByText(/22,453,486 of 24,000,000 tokens/);
+  await screen.findByText(/22\.5M of 24M tokens used/);
   expect(screen.queryByText("gemini · example-model")).toBeNull();
 });
 it("reports a failed carrier reading as unavailable", async () => {
@@ -219,7 +241,7 @@ it("reports a failed carrier reading as unavailable", async () => {
   await user.click(
     await screen.findByText("Recorded work waiting on the allowance"),
   );
-  expect(screen.getByText(/Account scans: Unavailable/)).toBeTruthy();
+  expect(screen.getByText(/Company scans: Unavailable/)).toBeTruthy();
 });
 it("explains the one-user floor when there are no eligible full users", async () => {
   mount(undefined, false, {
@@ -228,7 +250,7 @@ it("explains the one-user floor when there are no eligible full users", async ()
   });
   expect(
     await screen.findByText(
-      /With no eligible users, the allowance counts one user/,
+      /With no eligible users, the allowance counts 1 user/,
     ),
   ).toBeTruthy();
 });
@@ -259,4 +281,131 @@ it("saves a fixed company override without discarding the per-user value", async
       expected_revision: "budget-v1",
     },
   ]);
+});
+it("puts decision-first rows on top, then rows that declare a skip, then the rest", () => {
+  const row = (task: string, extra: Partial<typeof feature> = {}) => ({
+    ...feature,
+    task,
+    display_name: `Activity ${task}`,
+    ...extra,
+  });
+  render(
+    <LocaleProvider initial="en">
+      <AiFeatureTable
+        rows={[
+          row("a_plain"),
+          row("b_skipped", { decision_skip_reason: "unbound" }),
+          row("c_first", {
+            decision_first: true,
+            decision_candidate: {
+              tier: "decide",
+              provider: "jev_compatible",
+              model: "jev-classify",
+              processing: "cloud_provider",
+            },
+          }),
+          row("d_plain"),
+          row("e_first", { decision_first: true }),
+        ]}
+      />
+    </LocaleProvider>,
+  );
+
+  const order = screen
+    .getAllByRole("row")
+    .slice(1)
+    .map((tr) => within(tr).getByText(/^Activity /).textContent);
+  expect(order).toEqual([
+    "Activity c_first",
+    "Activity e_first",
+    "Activity b_skipped",
+    "Activity a_plain",
+    "Activity d_plain",
+  ]);
+  expect(screen.getAllByText("Decision model first")).toHaveLength(2);
+});
+
+it("shows a badge only for a departure, and no disclosure for a single candidate", () => {
+  render(
+    <LocaleProvider initial="en">
+      <AiFeatureTable
+        rows={[
+          feature,
+          {
+            ...feature,
+            task: "embed",
+            display_name: "Embed",
+            budget_exempt: true,
+          },
+        ]}
+      />
+    </LocaleProvider>,
+  );
+  expect(screen.getByText("Continues beyond allowance")).toBeTruthy();
+  expect(screen.queryByText("Decision model first")).toBeNull();
+  expect(screen.queryAllByRole("group")).toHaveLength(0);
+});
+
+it("opens a multi-candidate row to the fallbacks after the lead", async () => {
+  const user = userEvent.setup({ delay: null });
+  const [lead] = feature.effective_candidates;
+  render(
+    <LocaleProvider initial="en">
+      <AiFeatureTable
+        rows={[
+          {
+            ...feature,
+            effective_candidates: [
+              lead,
+              { ...lead, tier: "cheap_cloud", model: "fallback-model" },
+            ],
+          },
+        ]}
+      />
+    </LocaleProvider>,
+  );
+  await user.click(screen.getByText("gemini · example-model"));
+  const items = screen.getAllByRole("listitem");
+  expect(items).toHaveLength(1);
+  expect(items[0].textContent).toContain("fallback-model");
+});
+
+it("features card says decision model first, and why another feature skips it", async () => {
+  mount(undefined, false, {
+    ...status,
+    features: [
+      {
+        ...feature,
+        task: "capture_classify",
+        display_name: "Classify correspondence",
+        decision_first: true,
+        decision_candidate: {
+          tier: "decide",
+          provider: "jev_compatible",
+          model: "jev-classify",
+          processing: "cloud_provider",
+        },
+      },
+      {
+        ...feature,
+        task: "deep_read_triage",
+        display_name: "Triage a site",
+        decision_skip_reason: "local_only",
+      },
+    ],
+  });
+
+  // The lane leads, where it processes, and the ladder that answers after it.
+  expect(
+    await screen.findByText(
+      "Decision model first (jev_compatible · jev-classify · Cloud provider) → then gemini · example-model",
+    ),
+  ).toBeInTheDocument();
+  // A feature the lane does not serve keeps its ladder, with the reason beside it.
+  expect(screen.getByText("gemini · example-model")).toBeInTheDocument();
+  expect(
+    screen.getByText(
+      "Decision model not used: this activity takes only a local decision provider.",
+    ),
+  ).toBeInTheDocument();
 });

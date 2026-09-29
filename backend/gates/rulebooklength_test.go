@@ -75,7 +75,15 @@ var ceilings = map[string]int{
 	// otherwise pays back as prose nobody asked for — and the bar has to be in
 	// the rulebook, because a session writing the comment is the one that never
 	// opened the page.
-	"AGENTS.md": 351,
+	//
+	// +16 for the issue claim. Same running SAVING as the red-`main` rule and the
+	// same reason it cannot live only in `docs/`: a session that has not read the
+	// rule has no reason to open the page, and by the time it would, it has
+	// written the diff a colleague is already writing.
+	//
+	// +1 for how a claim ends: closing strips the label, so a session finishing
+	// through `Closes #N` knows it owes no release.
+	"AGENTS.md": 368,
 	// Raised from 160 for the AI-hue rule: indigo marks agent-authored content,
 	// and a reader who does not know that paints the meaning onto a decoration.
 	// The reasoning lives in the design-system README; what is here is the twelve
@@ -84,7 +92,10 @@ var ceilings = map[string]int{
 	// +4 for the one-Badge rule: a second spelling of a pill is invisible to a
 	// reviewer who has not read that there is one, and the gate that refuses it
 	// names itself only here.
-	"frontend/AGENTS.md": 176,
+	//
+	// +7 for the copy-style pointer: the gate holds only mechanics, and an author
+	// who never opens the style page writes the tone and vocabulary it cannot see.
+	"frontend/AGENTS.md": 183,
 }
 
 func TestNoRulebookGrowsPastItsCeiling(t *testing.T) {

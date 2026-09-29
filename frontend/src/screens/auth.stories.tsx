@@ -181,11 +181,19 @@ export const SessionExpired: Story = {
  * breathe.
  */
 export const ConnectionProblem: Story = {
-  render: () => (
-    <StoryProviders>
-      <AvailabilityScreen kind="connection" onRetry={() => undefined} />
-    </StoryProviders>
-  ),
+  render: () => {
+    // The screen checks the session once as it opens; Margince is still down.
+    installFetchStub({
+      "GET /me": () => {
+        throw new TypeError("Failed to fetch");
+      },
+    });
+    return (
+      <StoryProviders>
+        <AvailabilityScreen kind="connection" onRetry={() => undefined} />
+      </StoryProviders>
+    );
+  },
 };
 
 export const InstallationUnavailable: Story = {
@@ -372,7 +380,7 @@ export const ResetPasswordRefused: Story = {
   render: () => <ResetStory failure={422} />,
   play: async ({ canvasElement }) => {
     await submitNewPassword(canvasElement);
-    await within(canvasElement).findByText(/that password was refused/i);
+    await within(canvasElement).findByText(/the password was refused/i);
   },
 };
 
@@ -403,6 +411,6 @@ export const ResetServerFault: Story = {
   render: () => <ResetStory failure="transport" />,
   play: async ({ canvasElement }) => {
     await submitNewPassword(canvasElement);
-    await within(canvasElement).findByText(/your link is still valid/i);
+    await within(canvasElement).findByText(/the link is still valid/i);
   },
 };

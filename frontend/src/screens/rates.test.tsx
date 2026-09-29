@@ -228,12 +228,16 @@ describe("the rate sheets", () => {
     await waitFor(() => expect(screen.getByText("USD")).toBeTruthy());
     expect(screen.getByRole("button", { name: "Set rate" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Add model rate" })).toBeTruthy();
-    // Both cards expose the async "Refresh from sources" control to an admin.
+    // Each card exposes its own refresh to an admin: the currency sheet asks
+    // for proposals, the model sheet re-prices from the catalogue.
     expect(
       screen.getAllByRole("button", { name: "Refresh from sources" }),
-    ).toHaveLength(2);
+    ).toHaveLength(1);
+    expect(
+      screen.getAllByRole("button", { name: "Refresh model prices" }),
+    ).toHaveLength(1);
     // And nothing about reading is withheld or read-only for them.
-    expect(screen.queryByText(/read-only view/i)).toBeNull();
+    expect(screen.queryByText(/your role cannot change rates/i)).toBeNull();
   });
 
   it("hides write affordances for a role granted the read alone", async () => {
@@ -265,7 +269,7 @@ describe("the rate sheets", () => {
       within(model).queryByRole("button", { name: "Add model rate" }),
     ).toBeNull();
     expect(
-      within(model).queryByRole("button", { name: "Refresh from sources" }),
+      within(model).queryByRole("button", { name: "Refresh model prices" }),
     ).toBeNull();
   });
 
@@ -280,7 +284,7 @@ describe("the rate sheets", () => {
       within(model).getByRole("button", { name: "Add model rate" }),
     ).toBeTruthy();
     expect(
-      within(model).getByRole("button", { name: "Refresh from sources" }),
+      within(model).getByRole("button", { name: "Refresh model prices" }),
     ).toBeTruthy();
 
     const fx = rateCard("Currency rates");
@@ -304,15 +308,22 @@ describe("the rate sheets", () => {
     expect(
       screen.queryAllByRole("button", { name: "Refresh from sources" }),
     ).toEqual([]);
+    expect(
+      screen.queryAllByRole("button", { name: "Refresh model prices" }),
+    ).toEqual([]);
 
     // The read-only posture is stated once per readable sheet, and the withheld
     // reason is NOT: stacking both would explain one denial twice, in two
     // mutually contradictory ways.
     for (const title of ["Currency rates", "AI model costs"]) {
       const card = rateCard(title);
-      expect(within(card).getByText(/read-only view/i)).toBeTruthy();
+      expect(
+        within(card).getByText(/your role cannot change rates/i),
+      ).toBeTruthy();
     }
-    expect(screen.queryByText(/only an admin or ops can see/i)).toBeNull();
+    expect(
+      screen.queryByText(/only an administrator or operations user can see/i),
+    ).toBeNull();
   });
 
   // Withheld, not absent. Currency rates sits on the Company page a
@@ -328,7 +339,9 @@ describe("the rate sheets", () => {
     // the FX request log while the model list was still in flight.
     expect(await screen.findByText("claude-opus-4-8")).toBeTruthy();
     expect(
-      screen.getByText(/only an admin or ops can see the currency rates/i),
+      screen.getByText(
+        /only an administrator or operations user can see currency rates/i,
+      ),
     ).toBeTruthy();
     const fx = rateCard("Currency rates");
     expect(within(fx).queryByText("USD")).toBeNull();
@@ -337,7 +350,7 @@ describe("the rate sheets", () => {
     expect(within(fx).queryByText("Rates in force")).toBeNull();
     // One explanation, not two: the read-only caption belongs to a sheet the
     // reader may actually read.
-    expect(within(fx).queryByText(/read-only view/i)).toBeNull();
+    expect(within(fx).queryByText(/your role cannot change rates/i)).toBeNull();
     expect(urls.some((url) => url.includes("/v1/fx-rates"))).toBe(false);
 
     // The model sheet is unaffected — the grants are per object, and a card that
@@ -353,12 +366,16 @@ describe("the rate sheets", () => {
     // Awaited on the readable sibling, for the same reason as above.
     expect(await screen.findByText("USD")).toBeTruthy();
     expect(
-      screen.getByText(/only an admin or ops can see what each model costs/i),
+      screen.getByText(
+        /only an administrator or operations user can see model prices/i,
+      ),
     ).toBeTruthy();
     const model = rateCard("AI model costs");
     expect(within(model).queryByText("claude-opus-4-8")).toBeNull();
     expect(within(model).queryByText("Prices in force")).toBeNull();
-    expect(within(model).queryByText(/read-only view/i)).toBeNull();
+    expect(
+      within(model).queryByText(/your role cannot change rates/i),
+    ).toBeNull();
     expect(urls.some((url) => url.includes("/v1/ai-model-rates"))).toBe(false);
 
     const fx = rateCard("Currency rates");
@@ -376,10 +393,14 @@ describe("the rate sheets", () => {
     await waitFor(() => expect(screen.getByText("USD")).toBeTruthy());
     expect(screen.getByText("claude-opus-4-8")).toBeTruthy();
 
-    expect(screen.queryByText(/only an admin or ops can see/i)).toBeNull();
+    expect(
+      screen.queryByText(/only an administrator or operations user can see/i),
+    ).toBeNull();
     for (const title of ["Currency rates", "AI model costs"]) {
       const card = rateCard(title);
-      expect(within(card).getByText(/read-only view/i)).toBeTruthy();
+      expect(
+        within(card).getByText(/your role cannot change rates/i),
+      ).toBeTruthy();
     }
     expect(screen.queryByRole("button", { name: "Set rate" })).toBeNull();
     expect(screen.queryByRole("button", { name: "Add model rate" })).toBeNull();

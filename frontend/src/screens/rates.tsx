@@ -5,14 +5,14 @@ import type { components } from "../api/schema";
 import { useCan, useCanUpsert } from "../app/capability";
 import {
   Button,
-  DataTable,
   EmptyState,
   Field,
   Modal,
   TextInput,
 } from "../design-system/atoms";
+import { DataTable } from "../design-system/datatable";
 import { Heading } from "../design-system/heading";
-import { Panel, PanelBody } from "../design-system/panel";
+import { Panel, PanelBody, PanelIntro } from "../design-system/panel";
 import { SettingList, SettingRow } from "../design-system/settingrow";
 import { useT } from "../i18n";
 import {
@@ -22,6 +22,7 @@ import {
   useMe,
   WriteRefused,
 } from "./common";
+import { RefreshModelPrices } from "./rate-catalogue-refresh";
 import { RefreshFromSources } from "./rate-refresh";
 import "./rates.css";
 import { calendarDay } from "../format/calendarday";
@@ -146,7 +147,7 @@ export function FxRatesCard() {
       }
     >
       <PanelBody className="form-stack">
-        <p className="settings-panel-sub">{t("settings.rates.fxIntro")}</p>
+        <PanelIntro>{t("settings.rates.fxIntro")}</PanelIntro>
         {/* A sheet whose write affordances are all withheld says so ONCE, here,
             rather than annotating each absent control. The rule (design-system
             README): a permission-withheld SURFACE states it, while individual
@@ -353,15 +354,14 @@ export function ModelCostsCard() {
   }
 
   return (
-    // The verbs in the action band, for the reason spelled out on FxRatesCard:
-    // beside the title they were an unwrappable row that widened the card past
-    // a 390px viewport.
+    // The verbs in the action band, for the reason on FxRatesCard: beside the
+    // title they were an unwrappable row wider than a 390px viewport.
     <Panel
       title={t("settings.rates.modelTitle")}
       actions={
         canManage ? (
           <>
-            <RefreshFromSources path="/ai-model-rates/propose-refresh" />
+            <RefreshModelPrices />
             <Button variant="primary" onClick={() => setOpen(true)}>
               {t("settings.rates.modelAdd")}
             </Button>
@@ -370,7 +370,7 @@ export function ModelCostsCard() {
       }
     >
       <PanelBody className="form-stack">
-        <p className="settings-panel-sub">{t("settings.rates.modelIntro")}</p>
+        <PanelIntro>{t("settings.rates.modelIntro")}</PanelIntro>
         {/* A sheet whose write affordances are all withheld says so ONCE, here,
             rather than annotating each absent control. The rule (design-system
             README): a permission-withheld SURFACE states it, while individual
