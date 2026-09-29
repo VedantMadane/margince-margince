@@ -678,6 +678,30 @@ describe("useClarifyAnswers — honest failures", () => {
     expect(errorLog).toHaveBeenCalledWith(crash);
   });
 
+  it("never surfaces a raw exception message when the answer cannot be read, and reports it exactly once", async () => {
+    const crash = new TypeError("Cannot read properties of undefined");
+    // The answer arrives and its body breaks off: a fault past the network.
+    const answer = jsonResponse({});
+    Object.defineProperty(answer, "text", {
+      value: () => Promise.reject(crash),
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => answer),
+    );
+    const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
+    const { result } = setupHook([]);
+
+    act(() => {
+      result.current.answerClarify(entityClarify.id, gradionEntity.name);
+    });
+
+    await waitFor(() => expect(result.current.failure).not.toBeNull());
+    expect(result.current.failure).toEqual({ kind: "unconfirmed" });
+    expect(errorLog).toHaveBeenCalledTimes(1);
+    expect(errorLog).toHaveBeenCalledWith(crash);
+  });
+
   it("keeps nothing at all for a refusal the reader can already read", async () => {
     vi.stubGlobal(
       "fetch",

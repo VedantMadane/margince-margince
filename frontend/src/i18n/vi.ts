@@ -1039,6 +1039,24 @@ export const vi = {
   "card.errorTitle": "Thẻ này đã ngừng hoạt động.",
   "card.errorRetry": "Thử lại",
 
+  "offline.title": "Không kết nối được tới Margince",
+  "offline.body": "Margince sẽ tải lại khi có kết nối trở lại.",
+  "offline.retry": "Thử lại",
+
+  "connectivity.offline.title": "Thiết bị đang ngoại tuyến",
+  "connectivity.offline.body":
+    "Chưa thể lưu thay đổi cho đến khi có kết nối trở lại.",
+  "connectivity.unreachable.title": "Không kết nối được tới Margince",
+  "connectivity.unreachable.body":
+    "Chưa thể lưu thay đổi cho đến khi máy chủ phản hồi trở lại.",
+  "connectivity.restored": "Đã kết nối lại",
+  "connectivity.unsaved.offline":
+    "Thiết bị đang ngoại tuyến nên chưa lưu được gì. Hãy thử lại khi có kết nối trở lại.",
+  "connectivity.uncertain.offline":
+    "Thiết bị vừa mất kết nối nên thay đổi có thể chưa được lưu. Khi có kết nối trở lại, hãy kiểm tra xem đã lưu chưa rồi mới thử lại.",
+  "connectivity.uncertain.unreachable":
+    "Không kết nối được tới Margince nên thay đổi có thể chưa được lưu. Khi máy chủ phản hồi trở lại, hãy kiểm tra xem đã lưu chưa rồi mới thử lại.",
+
   "state.withheld": "Đã ẩn — vai trò của bạn không đọc được phần này",
   "state.unavailable": "Không tải được — đây có thể chưa phải toàn cảnh",
   "state.failed": "Phần này không tải được.",
@@ -4606,6 +4624,16 @@ export const vi = {
     "C\u00e1ch \u0111\u1ed3ng nghi\u1ec7p th\u1ea5y b\u1ea1n \u2014 tr\u00ean b\u1ea3n ghi, trong danh s\u00e1ch ch\u1ecdn v\u00e0 trong nh\u1eadt k\u00fd.",
   "settings.displayNameSave": "L\u01b0u",
   "settings.languageHelp": "Chỉ giữ trong phiên làm việc.",
+  "settings.deviceCard": "Thiết bị này",
+  "settings.installApp": "Ứng dụng Margince",
+  "settings.installAppHelp":
+    "Cài Margince lên thiết bị này thành ứng dụng có cửa sổ và biểu tượng riêng.",
+  "settings.installAppManual":
+    "Để cài đặt, chạm “Chia sẻ” rồi chọn “Thêm vào MH chính”.",
+  "settings.installAppInstalled": "Đã cài đặt",
+  "settings.installAppDismissed":
+    "Cài Margince sau qua menu trình duyệt hoặc biểu tượng cài đặt trên thanh địa chỉ.",
+  "settings.installAppAction": "Cài đặt",
   "role.admin": "Quản trị",
   "role.management": "Ban lãnh đạo",
   "role.manager": "Trưởng nhóm",

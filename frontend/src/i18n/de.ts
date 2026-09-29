@@ -1053,6 +1053,24 @@ export const de = {
   "card.errorTitle": "Diese Karte funktioniert nicht mehr",
   "card.errorRetry": "Erneut versuchen",
 
+  "offline.title": "Keine Verbindung zu Margince",
+  "offline.body": "Margince lädt wieder, sobald die Verbindung zurück ist.",
+  "offline.retry": "Erneut versuchen",
+
+  "connectivity.offline.title": "Gerät offline",
+  "connectivity.offline.body":
+    "Änderungen lassen sich erst speichern, wenn die Verbindung zurück ist.",
+  "connectivity.unreachable.title": "Margince nicht erreichbar",
+  "connectivity.unreachable.body":
+    "Änderungen lassen sich erst speichern, wenn der Server wieder antwortet.",
+  "connectivity.restored": "Verbindung wiederhergestellt",
+  "connectivity.unsaved.offline":
+    "Dieses Gerät ist offline, daher wurde nichts gespeichert. Versuche es erneut, sobald die Verbindung zurück ist.",
+  "connectivity.uncertain.offline":
+    "Dieses Gerät hat die Verbindung verloren, daher wurde die Änderung vielleicht nicht gespeichert. Prüfe das, sobald die Verbindung zurück ist, bevor du es erneut versuchst.",
+  "connectivity.uncertain.unreachable":
+    "Margince war nicht erreichbar, daher wurde die Änderung vielleicht nicht gespeichert. Prüfe das, sobald der Server wieder antwortet, bevor du es erneut versuchst.",
+
   // Das neunteilige Zustandsvokabular (design-system/surfacestate.tsx):
   // gehört dem ZUSTAND, nicht einer einzelnen Fläche.
   "state.withheld": "Für deine Rolle ausgeblendet",
@@ -4666,6 +4684,16 @@ export const de = {
     "Wird im Team an Datensätzen, die du bearbeitest, in Auswahllisten und im Audit-Log angezeigt.",
   "settings.displayNameSave": "Speichern",
   "settings.languageHelp": "Gilt für diese Sitzung.",
+  "settings.deviceCard": "Dieses Gerät",
+  "settings.installApp": "Margince-App",
+  "settings.installAppHelp":
+    "Margince wird auf diesem Gerät als App mit eigenem Fenster und Symbol installiert.",
+  "settings.installAppManual":
+    "Zum Installieren tippe auf „Teilen“ und dann auf „Zum Home-Bildschirm“.",
+  "settings.installAppInstalled": "Installiert",
+  "settings.installAppDismissed":
+    "Installiere Margince später über das Menü des Browsers oder das Installationssymbol in seiner Adressleiste.",
+  "settings.installAppAction": "Installieren",
   "role.admin": "Admin",
   "role.management": "Geschäftsleitung",
   "role.manager": "Teamleitung",

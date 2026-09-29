@@ -1075,6 +1075,28 @@ export const en = {
   "card.errorTitle": "This card stopped working",
   "card.errorRetry": "Retry",
 
+  // The page the service worker answers with when the device cannot reach
+  // Margince at all (src/offline/page.ts).
+  "offline.title": "No connection to Margince",
+  "offline.body": "Margince will load again once the connection is back.",
+  "offline.retry": "Retry",
+
+  // The shell's connectivity banner and the failure a refused write shows
+  // (app/connectivitybanner.tsx, app/connectivity.ts).
+  "connectivity.offline.title": "Device offline",
+  "connectivity.offline.body":
+    "Changes cannot be saved until the connection returns.",
+  "connectivity.unreachable.title": "Margince unreachable",
+  "connectivity.unreachable.body":
+    "Changes cannot be saved until the server answers again.",
+  "connectivity.restored": "Connection restored",
+  "connectivity.unsaved.offline":
+    "This device is offline, so nothing was saved. Retry when the connection returns.",
+  "connectivity.uncertain.offline":
+    "This device went offline, so the change may not have been saved. When the connection returns, check whether it was saved before retrying.",
+  "connectivity.uncertain.unreachable":
+    "Margince could not be reached, so the change may not have been saved. When the server answers again, check whether it was saved before retrying.",
+
   // The nine-state honesty vocabulary (design-system/surfacestate.tsx). These
   // words belong to the STATE and to no particular surface, which is why they
   // are keyed `state.*` rather than under any one screen — the same sentence
@@ -4769,6 +4791,16 @@ export const en = {
     "Shown to colleagues on records you edit, in pickers and in the audit log.",
   "settings.displayNameSave": "Save",
   "settings.languageHelp": "Applies to this session.",
+  "settings.deviceCard": "This device",
+  "settings.installApp": "Margince app",
+  "settings.installAppHelp":
+    "Adds Margince to this device as an app with its own window and icon.",
+  "settings.installAppManual":
+    "To install, tap “Share”, then “Add to Home Screen”.",
+  "settings.installAppInstalled": "Installed",
+  "settings.installAppDismissed":
+    "Install Margince later from the browser’s menu or the install icon in its address bar.",
+  "settings.installAppAction": "Install",
   "role.admin": "Admin",
   "role.management": "Management",
   "role.manager": "Team lead",
