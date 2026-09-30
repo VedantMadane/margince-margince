@@ -7582,7 +7582,7 @@ export const de = {
   "settings.page.company.sub":
     "Unternehmensname, Währung und Geschäftskontext für alle Datensätze.",
   "settings.page.authentication.sub":
-    "Wie sich Personen an dieser Installation anmelden und welche Apps für diese Installation handeln dürfen.",
+    "Wie sich Personen an dieser Installation anmelden, welche Apps für diese Installation handeln dürfen und welche IdP-Gruppen Rollen vergeben.",
   "settings.page.members.sub":
     "Alle, die einen Platz haben, und worauf sie jeweils zugreifen können.",
   "settings.page.teams.sub":
@@ -8747,6 +8747,28 @@ export const de = {
     "Zeigt diesen Anbieter auf der Anmeldeseite. Beim Ausschalten werden laufende Anmeldungen abgebrochen; bestehende Sitzungen bleiben bestehen.",
   "signInMethods.noneConfigured":
     "Für diese Installation ist kein externer Anbieter konfiguriert. Das Passwort ist die einzige Anmeldemethode.",
+  "groupRoles.title": "Rollen aus IdP-Gruppen",
+  "groupRoles.sub":
+    "Vergibt bei der Unternehmensanmeldung eine Rolle an jedes eingeladene Mitglied einer IdP-Gruppe. Die Gruppe muss genau so geschrieben sein wie im groups-Anspruch des ID-Tokens. Ein Konto entsteht dabei nicht: eine nicht eingeladene E-Mail-Adresse wird weiterhin abgewiesen, mit oder ohne Gruppen.",
+  "groupRoles.grantOnlyTitle": "Nur Vergabe: das Verzeichnis entzieht nie",
+  "groupRoles.grantOnly":
+    "Jede Anmeldung vergibt die zugeordneten Rollen und entfernt keine. Wer aus einer IdP-Gruppe entfernt wird, verliert die Rolle hier nicht: Der Entzug bleibt eine bewusste Admin-Entscheidung am Konto des Mitglieds.",
+  "groupRoles.adminGrant":
+    "Wer eine Gruppe auf Admin abbildet, macht jedes eingeladene Mitglied dieser Gruppe bei der nächsten Anmeldung zum Admin.",
+  "groupRoles.group": "IdP-Gruppe",
+  "groupRoles.groupPlaceholder": "Gruppe, genau wie im ID-Token geschrieben",
+  "groupRoles.role": "Vergebene Rolle",
+  "groupRoles.add": "Gruppe hinzufügen",
+  "groupRoles.remove": "Diese Gruppenzuordnung entfernen",
+  "groupRoles.removeNamed": "Zuordnung {group} entfernen",
+  "groupRoles.save": "Gruppenzuordnungen speichern",
+  "groupRoles.empty":
+    "Keine Gruppen zugeordnet. Die Unternehmensanmeldung vergibt nichts über das hinaus, was ein Mitglied bereits hält.",
+  "groupRoles.blankGroup": "Jede Zuordnung braucht einen Gruppennamen.",
+  "groupRoles.whitespaceGroup":
+    "Ein Gruppenname darf nicht mit einem Leerzeichen beginnen oder enden. Er muss dem ID-Token genau entsprechen.",
+  "groupRoles.duplicateGroup": "Jede Gruppe kann nur einmal zugeordnet werden.",
+  "groupRoles.tooMany": "Höchstens 64 Gruppen können zugeordnet werden.",
   "oauthApp.google.title": "Google-App",
   "oauthApp.google.sub":
     "Postfächer werden über eine Google-OAuth-App verbunden, die deinem Unternehmen gehört und dessen eigene Zugangsdaten nutzt. Auch die Anmeldung mit Google läuft darüber.",
