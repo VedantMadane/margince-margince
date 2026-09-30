@@ -16,6 +16,17 @@ package gates
 // gatekit:fixture the owning module path each table's writes are compared
 // against — expected data, not a cost anyone is paying.
 var tableOwners = map[string]string{
+	"report_projection_fence":      storekitOwned,
+	"reporting_framework":          "internal/modules/reporting",
+	"reporting_framework_revision": "internal/modules/reporting",
+	"report_definition":            "internal/modules/reporting",
+	"report_definition_revision":   "internal/modules/reporting",
+	"sales_target":                 "internal/modules/reporting",
+	"sales_target_revision":        "internal/modules/reporting",
+	"report_schedule":              "internal/modules/reporting",
+	"report_execution":             "internal/modules/reporting",
+	"report_edition":               "internal/modules/reporting",
+	"report_edition_contribution":  "internal/modules/reporting",
 	// identity
 	"workspace":          "internal/modules/identity",
 	"app_user":           "internal/modules/identity",
@@ -116,7 +127,6 @@ var tableOwners = map[string]string{
 	// owns an external audience, its own credentials and an immutable
 	// publication history, none of which the deal spine has a place for.
 	"deal_room":             "internal/modules/dealrooms",
-	"deal_room_release":     "internal/modules/dealrooms",
 	"deal_room_participant": "internal/modules/dealrooms",
 	"deal_room_invitation":  "internal/modules/dealrooms",
 	"deal_room_session":     "internal/modules/dealrooms",
@@ -448,6 +458,7 @@ var tableOwners = map[string]string{
 	"assurance_exception":             "internal/modules/assurance",
 	"assurance_resolution":            "internal/modules/assurance",
 	"forecast_call":                   "internal/modules/forecasting",
+	"forecast_capture_status":         "internal/modules/forecasting",
 	"forecast_snapshot":               "internal/modules/forecasting",
 	"forecast_contribution":           "internal/modules/forecasting",
 	"weekly_plan":                     "internal/modules/weeklyplan",

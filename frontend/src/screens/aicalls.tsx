@@ -4,6 +4,7 @@ import { useId, useState } from "react";
 import { api, FIRST_PAGE } from "../api/client";
 import type { components } from "../api/schema";
 import { useCan } from "../app/capability";
+import { useUrlParams } from "../app/urlstate";
 import { Badge, Button, EmptyState, TableScroll } from "../design-system/atoms";
 import { Panel, PanelBody, PanelIntro } from "../design-system/panel";
 import { Select } from "../design-system/select";
@@ -104,6 +105,9 @@ export function useLastCallAt(): LastCall {
     : { state: "never" };
 }
 
+/** The address dial the trace is narrowed by, so a task row can link to its calls. */
+export const CALL_TASK_PARAM = "task";
+
 export function AiCallsCard() {
   const t = useT();
   const { locale } = useLocale();
@@ -113,7 +117,13 @@ export function AiCallsCard() {
   // seat may still read a diagnostic.
   const canSee = useCan("ai_diagnostics", "read");
   const zone = viewerZone();
-  const [task, setTask] = useState("");
+  const [params, setParams] = useUrlParams();
+  const task = params.get(CALL_TASK_PARAM) ?? "";
+  const setTask = (next: string) => {
+    const dials = new Map(params);
+    dials.set(CALL_TASK_PARAM, next);
+    setParams(dials);
+  };
   const [expanded, setExpanded] = useState<string | null>(null);
   const query = useCallTrace(task, canSee);
   const calls = query.data?.pages.flatMap((page) => page.data) ?? [];
@@ -121,7 +131,10 @@ export function AiCallsCard() {
   // The filter options are the server's complete task set (carried on every
   // page), NOT the tasks on the loaded rows: deriving them from `calls` would
   // collapse the dropdown to the one selected task once a filter is applied.
-  const tasks = query.data?.pages[0]?.tasks ?? [];
+  const listed = query.data?.pages[0]?.tasks ?? [];
+  // A task reached by link may have no calls yet and so be absent from the
+  // server's set; it stays selectable so the select shows what is filtered.
+  const tasks = task && !listed.includes(task) ? [task, ...listed] : listed;
 
   if (!canSee) {
     // Withheld, not absent — the same choice the spend card above it makes. An
@@ -177,13 +190,16 @@ export function AiCallsCard() {
                   {calls.length === 0 ? (
                     <EmptyState>{t("aicalls.empty")}</EmptyState>
                   ) : (
-                    // Six columns of trace, none of them droppable — a call is
-                    // only diagnosable with its model, its tokens and its latency
-                    // side by side. `TableScroll` is the one spelling of that
-                    // containment, the same box DataTable puts every list it
-                    // draws inside (atoms.tsx).
+                    // Every figure of a call stays — a call is only diagnosable
+                    // with its model, its tokens and its latency side by side —
+                    // but they share three columns, not six: the moment and the
+                    // latency ride under the task and the tokens, and the model
+                    // wraps. A table wider than its card scrolls, and an overlay
+                    // scrollbar draws nothing, so it just looks cut off.
+                    // `TableScroll` stays as the containment for a viewport too
+                    // narrow for even this.
                     <TableScroll label={t("aicalls.callsLabel")}>
-                      <table className="table">
+                      <table className="table aicalls-table">
                         <thead>
                           <tr>
                             {/* The disclosure column. Named rather than left
@@ -192,11 +208,14 @@ export function AiCallsCard() {
                             <th className="sr-only">
                               {t("aicalls.col.detail")}
                             </th>
-                            <th>{t("aicalls.col.when")}</th>
-                            <th>{t("aicalls.col.task")}</th>
+                            <th>
+                              {t("aicalls.col.task")} / {t("aicalls.col.when")}
+                            </th>
                             <th>{t("aicalls.col.model")}</th>
-                            <th>{t("aicalls.col.tokens")}</th>
-                            <th>{t("aicalls.col.latency")}</th>
+                            <th>
+                              {t("aicalls.col.tokens")} /{" "}
+                              {t("aicalls.col.latency")}
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
@@ -301,9 +320,9 @@ function FragmentRow({
             <ChevronDown className="expander-chevron" aria-hidden />
           </Button>
         </td>
-        <td>{when}</td>
         <td>
           {call.task}
+          <div className="t-caption">{when}</div>
           <div className="aicalls-badges">
             {/* The logical call's flag, not this row's kind: a fallback's
                 terminal row is the completion that answered after the
@@ -330,14 +349,16 @@ function FragmentRow({
         <td>
           {tierLabel(call.tier, t)} · {call.provider}/{call.served_model}
         </td>
-        <td>{tokens}</td>
         <td>
-          {t("aicalls.ms", { value: formatNumber(call.latency_ms, locale) })}
+          {tokens}
+          <div className="t-caption">
+            {t("aicalls.ms", { value: formatNumber(call.latency_ms, locale) })}
+          </div>
         </td>
       </tr>
       {expanded && (
         <tr>
-          <td colSpan={6} id={panelId}>
+          <td colSpan={4} id={panelId}>
             <CallDetailPanel id={call.id} captureEnabled={captureEnabled} />
           </td>
         </tr>

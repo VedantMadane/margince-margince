@@ -142,6 +142,14 @@ function code(path: string, source: string): string {
 // output moved with the machine it ran on would assert nothing.
 const pinnedZones: { file: string; why: string }[] = [
   {
+    file: "screens/reporting.fixtures.ts",
+    why: "The report API fixture carries the installation timezone so schedule and frozen-period rendering remain independent of the browser zone.",
+  },
+  {
+    file: "screens/reporting.schedule.tsx",
+    why: "Weekday names are generated from fixed Monday-through-Sunday UTC instants; these are locale labels, not event or record dates.",
+  },
+  {
     file: "screens/book.testkit.ts",
     why: "The booking API fixture supplies the host’s effective working-hours timezone independently of the viewer’s zone, so the form can show the actual calendar policy.",
   },
@@ -278,8 +286,16 @@ const pinnedZones: { file: string; why: string }[] = [
     why: "The offline `me` fixture stands in for a real installation's stored settings, and its company timezone is one of those settings — a value on the wire, not a zone this code picks.",
   },
   {
-    file: "design-system/composed.stories.tsx",
-    why: "TimelineRow takes its zone as a prop; the story has to hand it a named one to show what the row renders.",
+    file: "design-system/pipelineboard.stories.tsx",
+    why: "PipelineBoard takes the record's zone as a prop for its cards' close dates; the story has to hand it a named one, and a zone read off the runner would draw a different date on every machine the catalog builds on.",
+  },
+  {
+    file: "design-system/recordview.stories.tsx",
+    why: "RecordView hands its zone to TimelineRow as a prop; the story has to hand it a named one to show what the row renders.",
+  },
+  {
+    file: "design-system/timelinelist.stories.tsx",
+    why: "TimelineList and GroupedTimelineList take their zone as a prop; the story has to hand them a named one to show the day and time each row renders.",
   },
   {
     file: "design-system/composed.test.tsx",

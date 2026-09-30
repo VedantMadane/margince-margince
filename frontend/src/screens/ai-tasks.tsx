@@ -4,11 +4,10 @@
 import { useCan } from "../app/capability";
 import { Panel, PanelBody, PanelIntro } from "../design-system/panel";
 import { useT } from "../i18n";
-import {
-  AiFeaturesWithheldPanel,
-  AiFeatureTable,
-  useAiStatus,
-} from "./ai-admin";
+import { AiFeaturesWithheldPanel, useAiStatus } from "./ai-admin";
+import { AiFeatureTable } from "./ai-feature-table";
+import { useAiHealth } from "./ai-health";
+import { PanelTitle } from "./ai-terms";
 import { QueryGate } from "./common";
 
 // What each AI task runs on right now, under the bindings above it.
@@ -23,6 +22,7 @@ export function AiTasksCard() {
   const canBudget = useCan("ai_budget", "read");
   const canRoute = useCan("ai_routing", "read");
   const status = useAiStatus(canDiagnose && canBudget);
+  const health = useAiHealth(canDiagnose).data;
   // `/ai/status` needs all three: without the diagnostics or budget grant
   // there is no payload, and without routing read its task list is empty —
   // either way the withheld panel says so, rather than drawing a table that
@@ -31,11 +31,17 @@ export function AiTasksCard() {
     return <AiFeaturesWithheldPanel />;
   }
   return (
-    <Panel title={t("aiTasks.title")}>
+    <Panel title={<PanelTitle term="task">{t("aiTasks.title")}</PanelTitle>}>
       <PanelBody>
         <PanelIntro>{t("aiTasks.intro")}</PanelIntro>
         <QueryGate query={status} pendingLabel={t("aiTasks.title")}>
-          {(current) => <AiFeatureTable rows={current.features} />}
+          {(current) => (
+            <AiFeatureTable
+              rows={current.features}
+              health={health}
+              canTrace={canDiagnose}
+            />
+          )}
         </QueryGate>
       </PanelBody>
     </Panel>

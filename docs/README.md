@@ -81,6 +81,7 @@ a 24-hour deadline is not a thing to work out under pressure.
 - [getting-started.md](tutorials/getting-started.md) — clone → running instance with a bootstrapped workspace.
 
 ### How-to — accomplish a task
+- [Operate sales reporting](how-to/operate-reporting.md) — pilot setup, captures, schedules, privacy and durable rollback.
 - [add-an-endpoint.md](how-to/add-an-endpoint.md) — add or change an API operation (contract → gen → handler).
 - [add-a-module.md](how-to/add-a-module.md) — add a new capability (module) or a cross-module edge, wired into compose.
 - [add-a-job.md](how-to/add-a-job.md) — declare a background job kind in the job contract, then write and register its worker.
@@ -115,6 +116,7 @@ a 24-hour deadline is not a thing to work out under pressure.
 
 ### Reference — look it up
 - [modules.md](reference/modules.md) — the modules: what each owns, its tables, its HTTP surface.
+- [entity-model/](reference/entity-model/README.md) — every table, every column, and what each one is: one page per owning area, rendered from the schema the migrations build, the contract's field descriptions and the ownership map. Never hand-edited.
 - [brief-priorities.md](reference/brief-priorities.md) — how morning priorities, scoped risk and weekly coverage are derived.
 - [meeting-brief.md](reference/meeting-brief.md) — the pre-meeting brief and its preparation plan: the three invariants, what a caller is and is not shown, how a year of history becomes five moments, and why the plan and the sections have separate writers.
 - [agent-tools.md](reference/agent-tools.md) — the governed tool catalog: every registered tool, its tier, the passport scope it spends, and its egress.

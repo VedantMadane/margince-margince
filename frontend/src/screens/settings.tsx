@@ -20,7 +20,7 @@ import { dotTier } from "../app/autonomy";
 import { useCan, useCanWrite } from "../app/capability";
 import { isEntityKind } from "../app/entity";
 import { useRecordZone } from "../app/recordzone";
-import { navigate, navigateReplacing, type Route } from "../app/router";
+import { navigateReplacing, type Route } from "../app/router";
 import { setThemeChoice, THEME_CHOICES, useThemeChoice } from "../app/theme";
 import { useUnsavedGuard } from "../app/unsaved";
 import {
@@ -67,8 +67,7 @@ import { viewerZone } from "../format/timezone";
 import { LOCALES, type Locale, localeNameKey, useLocale, useT } from "../i18n";
 import type { MessageKey } from "../i18n/en";
 import { AcquisitionSourcesCard } from "./acquisitionsources";
-import { AiBudgetCard, AiFeaturesCard } from "./ai-admin";
-import { AiHealthCard } from "./ai-health";
+import { AiBudgetCard } from "./ai-admin";
 import { AiProviderKeysCard } from "./ai-provider-keys";
 import { AiRoutingCard } from "./ai-routing";
 import { AiTasksCard } from "./ai-tasks";
@@ -144,7 +143,7 @@ import { VoiceDnaCard } from "./voice-dna";
 import { WebhooksCard } from "./webhooks";
 import "./settings.css";
 
-import { ProvidersStat, SpendStat } from "./ai-settings";
+import { ProvidersStat } from "./ai-settings";
 import type { SettingsPageId } from "./settingscatalog";
 import { SettingsBoundary, SettingsHome } from "./settingshome";
 // The catalog, the addresses and the visibility predicate moved to
@@ -331,16 +330,8 @@ export function tabContent(id: SettingsPageId): ReactNode {
               the thing an operator came here to fix. */}
           <ProvidersStat />
           <AiProviderKeysCard />
-          {/* The price sheet lives on Usage, so the routing card links there
-              rather than restating it. Dropping the callback silently removes
-              that link — the lane rows then name a model with no way to see
-              what it costs. */}
-          <AiRoutingCard onPriceSheet={() => navigate(settingsHref("usage"))} />
+          <AiRoutingCard />
           <AiTasksCard />
-          {/* The rows above carry each tier's health in one line; this is the
-              full reading, with the last failure's sentinel, and the only card
-              here a diagnostics-only role (management) can open. */}
-          <AiHealthCard />
         </>
       );
     case "automations":
@@ -348,13 +339,11 @@ export function tabContent(id: SettingsPageId): ReactNode {
     case "usage":
       return (
         <>
-          {/* What the month cost, then the breakdown, then which activity ran
-              on what. */}
+          {/* The allowance with the month's spend in it, then where it went, then
+              the prices the estimate is drawn from. */}
           <AiBudgetCard />
-          <SpendStat />
           <AiUsageCard />
           <ModelPriceDetails />
-          <AiFeaturesCard />
         </>
       );
     case "model-calls":
