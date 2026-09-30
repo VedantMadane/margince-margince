@@ -10401,7 +10401,7 @@ export const en = {
   "lists.settingsTitle": "Edit this list",
   "lists.archive": "Archive list",
   "lists.restore": "Restore",
-  "lists.unavailable": "Lists are not switched on for this installation.",
+  "lists.unavailable": "Lists are switched off for this installation.",
   "lists.gone": "This list is not there, or it is not shared with you.",
   "lists.unnamed": "Unnamed",
   "lists.head.facts":
@@ -10507,6 +10507,17 @@ export const en = {
   "lists.history.checker": "The 15-minute check",
   "lists.history.liveNote":
     "The check runs every 15 minutes and takes the lists checked longest ago first, so with very many lists one can wait longer; “Last checked” says when it was. Who joined and left is recorded as of the check that noticed it, and a record that joins and leaves between two checks is not recorded.",
+  "lists.editFilter": "Edit filter",
+  "lists.editingTitle": "Editing the filter of {name}",
+  "lists.editingBody":
+    "Save to the list to change which records it holds. Save as Live List makes a new list instead.",
+  "lists.saveFilterTo": "Save to {name}",
+  "lists.saveFilterTitle": "Change the filter of {name}?",
+  "lists.saveFilterBody":
+    "Records join and leave the list by the new filter from now on, and the change is kept in its history. Everyone who can find the list sees the new members.",
+  "lists.saveFilterConfirm": "Save filter",
+  "lists.saveFilterConflict":
+    "Someone changed this list after you opened it. Open the list again to see their change, then edit the filter.",
   "lists.history.someone": "Someone",
   "lists.changes.since": "Since your visit on {when}:",
   "lists.changes.joined_one": "{count} joined",
