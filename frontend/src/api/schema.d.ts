@@ -31150,6 +31150,8 @@ export interface components {
             blocks: components["schemas"]["ReportingBlockKind"][];
         };
         ReportingCatalog: {
+            /** @description Whether saved snapshots have the retention policy required for automatic publication. Present for schedule authors. */
+            schedule_ready?: boolean;
             metrics: components["schemas"]["ReportingMetricDefinition"][];
         };
         ReportingReportInput: {
@@ -31166,7 +31168,9 @@ export interface components {
             latest_captured_at?: string;
             /** Format: date-time */
             next_due_at?: string;
+            /** @description Comma-separated frequencies of all schedules including paused schedules. */
             cadence?: string;
+            paused_schedule_count?: number;
             last_status?: string;
             /** @description Whether the current human may manage this report, before individual object-action grants. */
             can_manage?: boolean;
@@ -31190,6 +31194,8 @@ export interface components {
             archived_at?: string;
         };
         ReportingTargetInput: {
+            /** @description Excludes this allocation from live progress while preserving its revisions and saved snapshots. */
+            retired?: boolean;
             metric: components["schemas"]["ReportingMetricID"];
             scope: components["schemas"]["ReportingScope"];
             /** Format: uuid */
@@ -31203,6 +31209,8 @@ export interface components {
             reason: string;
         };
         ReportingTarget: {
+            /** @description All definitions including the current revision, returned in revision order on the individual target read. */
+            history?: components["schemas"]["ReportingTargetInput"][];
             /** Format: int64 */
             allocated_value?: number;
             /** Format: int64 */
