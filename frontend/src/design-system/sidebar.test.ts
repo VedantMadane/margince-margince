@@ -45,14 +45,12 @@ const { roots, categories, topics } = readDesignCatalog(frontendRoot);
 const UNSHAPED = new Map([
   [
     "Design System",
-    "the kitchen-sink sheets, each composing many components under one title",
-  ],
-  [
-    "Records",
-    "record pages whose shared titles and leaf-and-group nodes are unresolved",
+    "its own name and the RecordView sheet fail the case arm; it holds the two kitchen-sink sheets and the agent workbench",
   ],
 ]);
 const SHAPED_ROOTS = roots.filter((root) => !UNSHAPED.has(root));
+// The titles an exemption may take out of the arms: the sheets it was written for.
+const EXEMPT_CEILING = 3;
 
 // Spellings that hold wherever they stand in a segment, each with its reason.
 const PROPER_NOUNS = new Map([
@@ -67,6 +65,7 @@ const ACRONYMS = new Map([
   ["AI", "the agent tier, as the product's copy writes it"],
   ["IMAP", "the mail protocol, as the copy writes it"],
   ["DNA", "Voice DNA, the product's name for a writing voice"],
+  ["VAT", "the tax, as the copy writes it"],
 ]);
 
 type Filed = { path: string; title: string };
@@ -88,6 +87,19 @@ function emptyRootFindings(filed: Filed[], documented: string[]): string[] {
     return [
       `${root}/ is documented and holds no ${docs ? "docs page" : "story"}`,
     ];
+  });
+}
+
+function exemptionFindings(
+  filed: Filed[],
+  exempt: ReadonlyMap<string, string>,
+  ceiling: number,
+): string[] {
+  return [...exempt.keys()].flatMap((root) => {
+    const held = filed.filter(({ title }) => rootOf(title) === root).length;
+    return held > ceiling
+      ? [`${root}/ is exempt and holds ${held} titles, over ${ceiling}`]
+      : [];
   });
 }
 
@@ -271,7 +283,7 @@ describe("the sidebar is shelved the way the catalog says", () => {
     expect(roots.length).toBeGreaterThan(4);
     expect(categories.length).toBeGreaterThan(5);
     expect(topics.length).toBeGreaterThan(1);
-    expect(shaped.length).toBeGreaterThan(300);
+    expect(shaped.length).toBeGreaterThan(550);
     expect(
       shaped.filter(({ title }) => rootOf(title) === "Components").length,
     ).toBeGreaterThan(50);
@@ -286,6 +298,10 @@ describe("the sidebar is shelved the way the catalog says", () => {
     expect(
       [...UNSHAPED.keys()].filter((root) => !roots.includes(root)),
     ).toEqual([]);
+  });
+
+  it("exempts no more titles than the sheets it names", () => {
+    expect(exemptionFindings(filed, UNSHAPED, EXEMPT_CEILING)).toEqual([]);
   });
 
   it("fills every root the catalog documents", () => {
@@ -351,6 +367,20 @@ describe("the sidebar detectors report what they are for", () => {
       "Get started/ is documented and holds no docs page",
       "Shell/ is documented and holds no story",
     ]);
+  });
+
+  it("sees an exemption that takes a product root out of the arms", () => {
+    const planted = [
+      { path: "a", title: "Design System/Atoms" },
+      { path: "b", title: "Records/Contacts" },
+      { path: "c", title: "Records/Companies" },
+    ];
+    expect(
+      exemptionFindings(planted, new Map([["Design System", "sheets"]]), 1),
+    ).toEqual([]);
+    expect(
+      exemptionFindings(planted, new Map([["Records", "unshaped"]]), 1),
+    ).toEqual(["Records/ is exempt and holds 2 titles, over 1"]);
   });
 
   it("reads the introduction's roots off its list, and nothing else", () => {
@@ -421,6 +451,7 @@ describe("the sidebar detectors report what they are for", () => {
       "Linkedin import",
       "Oauth return",
       "VCard import",
+      "Vat mark",
     ]) {
       expect(isSentenceCase(segment)).toBe(false);
     }
@@ -440,6 +471,7 @@ describe("the sidebar detectors report what they are for", () => {
       "vCard import",
       "Voice DNA",
       "Add to Shortlist",
+      "VAT mark",
     ]) {
       expect(isSentenceCase(segment)).toBe(true);
     }
