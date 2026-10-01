@@ -204,6 +204,10 @@ func WithBlobstore(store blobstore.Store) Option {
 func WithKeyvault(vault keyvault.Vault) Option {
 	return func(s *Server, pool *pgxpool.Pool) {
 		s.vault = vault
+		// The MFA endpoints seal each member's TOTP secret here — but only once
+		// the challenge signer exists too; armMFAEnrolment holds the coupling and
+		// mutates the one identity service the auth handlers already hold.
+		s.armMFAEnrolment()
 		// Backfilled for the same reason the object store is: WithDataReset may
 		// have already run, and a reset that cannot reach the vault leaves the
 		// sealed credentials of the installation it just wiped resident.
@@ -415,5 +419,13 @@ func WithSendAuthority(authority activities.SendAuthority) Option {
 	return func(s *Server, pool *pgxpool.Pool) {
 		s.send.SendAuthority = authority
 		s.rebuildToolRegistry(pool)
+	}
+}
+
+// WithFilterProposals binds the lane that reads a list described in plain
+// words into filter clauses. Unbound, the endpoint answers 409 ai_not_configured.
+func WithFilterProposals(brain completer) Option {
+	return func(s *Server, _ *pgxpool.Pool) {
+		s.filterProposalHandlers = s.withFilterProposalLane(brain)
 	}
 }

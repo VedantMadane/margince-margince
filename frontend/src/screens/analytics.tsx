@@ -5,10 +5,11 @@ import { api } from "../api/client";
 import type { components } from "../api/schema";
 import { useCan } from "../app/capability";
 import { useRoute } from "../app/router";
-import { EmptyState, StatCard } from "../design-system/atoms";
+import { Button, EmptyState, StatCard } from "../design-system/atoms";
 import { DataTable } from "../design-system/datatable";
 import { IconAction } from "../design-system/iconaction";
 import { Panel, PanelBody, PanelIntro } from "../design-system/panel";
+import { Popover } from "../design-system/popover";
 import { RecordTabs } from "../design-system/recordtabs";
 import { StatStrip } from "../design-system/statstrip";
 import {
@@ -65,7 +66,6 @@ import { ForecastShareActions } from "./analytics.share";
 import { QueryGate, throwProblem, useMe } from "./common";
 import { dealsFilteredBy } from "./dealsaddress";
 import { ReportingDefinitions } from "./reporting.definitions";
-import { ReportingForecastGraphs } from "./reporting.forecast";
 import { ReportingLibrary } from "./reporting.library";
 import { ReportingOverview } from "./reporting.overview";
 import { ReportingTargets } from "./reporting.targets";
@@ -134,7 +134,7 @@ const SECTION_REPORTS = {
   // Source health: an ops view over the nightly check's own coverage rows.
   coverage: [],
   // What was sold becoming what is delivered: the three project reports.
-  delivery: ["projects-by-phase", "project-commitments", "projects-gone-quiet"],
+  delivery: ["project-commitments", "projects-gone-quiet", "projects-by-phase"],
   questions: [],
 } as const satisfies Record<Section, readonly ReportKey[]>;
 
@@ -364,7 +364,9 @@ function ForecastStrip({
       {/* How to read the second figure in every slot, as the panel's one
           descriptive line: a notice box inside the panel was a pane inside a
           pane, and it outweighed the readings it was only explaining. */}
-      <PanelIntro>{t("analytics.forecastBanner")}</PanelIntro>
+      <Popover onHover label={t("analytics.weighted")}>
+        <p>{t("analytics.forecastBanner")}</p>
+      </Popover>
       {/* ONE strip, because there is now one denomination. A plate of ruled
           slots claims its figures are ONE comparison, and a strip per currency
           — the only honest way to show native sums, since adding euros to dong
@@ -710,7 +712,15 @@ function DataCoverageView({
       {(run) =>
         run == null ? (
           <Panel title={t("analytics.sectionCoverage")}>
-            <EmptyState>{t("analytics.coverageNeverRun")}</EmptyState>
+            <EmptyState>
+              {t("analytics.coverageNeverRun")}
+              <Button
+                variant="link"
+                onClick={() => openAnalyticsSection("forecast")}
+              >
+                {t("analytics.sectionForecast")}
+              </Button>
+            </EmptyState>
           </Panel>
         ) : (
           <Panel title={t("analytics.sectionCoverage")}>
@@ -746,7 +756,15 @@ function DataCoverageView({
               />
               {/* Record-level input problems live where they are answered: the
                 Forecast input review. One resolution surface, not two. */}
-              <p className="t-sub">{t("analytics.coverageInputsElsewhere")}</p>
+              <Button
+                variant="link"
+                onClick={() => openAnalyticsSection("forecast")}
+              >
+                {t("review.title")}
+              </Button>
+              {run.sources.some((source) => source.state !== "checked") && (
+                <p className="t-caption">{t("reporting.coverageAction")}</p>
+              )}
             </PanelBody>
           </Panel>
         )
@@ -1000,26 +1018,34 @@ export function AnalyticsScreen() {
   const canReadFramework = useCan("reporting_framework", "read");
   const canReadCoverage = useCan("data_coverage", "read");
   const coverageProbe = useDataCoverage();
+  const availableSections = SECTIONS.filter((candidate) => {
+    if (candidate === "reports") return reportingEnabled && canReadReports;
+    if (candidate === "targets") return reportingEnabled && canReadTargets;
+    if (candidate === "definitions")
+      return reportingEnabled && canReadFramework;
+    if (candidate === "outcomes") {
+      return context.data?.default_scope.kind === "owner";
+    }
+    if (candidate === "coverage") {
+      // The read starts only with the ops grant; the tab appears
+      // after the server has answered.
+      return canReadCoverage && coverageProbe.isSuccess;
+    }
+    return true;
+  });
   const header = (
     <div className="analytics-header">
       <RecordTabs
-        options={SECTIONS.filter((candidate) => {
-          if (candidate === "reports")
-            return reportingEnabled && canReadReports;
-          if (candidate === "targets")
-            return reportingEnabled && canReadTargets;
-          if (candidate === "definitions")
-            return reportingEnabled && canReadFramework;
-          if (candidate === "outcomes") {
-            return context.data?.default_scope.kind === "owner";
-          }
-          if (candidate === "coverage") {
-            // The read starts only with the ops grant; the tab appears
-            // after the server has answered.
-            return canReadCoverage && coverageProbe.isSuccess;
-          }
-          return true;
-        })}
+        options={availableSections.filter(
+          (candidate) =>
+            [
+              "performance",
+              "pipeline",
+              "forecast",
+              "reports",
+              "outcomes",
+            ].includes(candidate) || candidate === section,
+        )}
         value={section}
         onChange={openAnalyticsSection}
         labels={{
@@ -1037,12 +1063,62 @@ export function AnalyticsScreen() {
         label={t("analytics.sections")}
       />
       <div className="analytics-header-end">
-        {selection && context.data ? (
-          <AnalyticsScopePicker
-            scopes={context.data.allowed_scopes}
-            selected={selection.scope}
-            onSelect={selectScope}
-          />
+        {reportingEnabled && (canReadTargets || canReadFramework) && (
+          <Popover label={t("reporting.settings")}>
+            {availableSections
+              .filter(
+                (candidate) =>
+                  candidate === "targets" || candidate === "definitions",
+              )
+              .map((candidate) => (
+                <Button
+                  key={candidate}
+                  variant="link"
+                  onClick={() => openAnalyticsSection(candidate)}
+                >
+                  {t(
+                    candidate === "targets"
+                      ? "reporting.targets"
+                      : "reporting.definitions",
+                  )}
+                </Button>
+              ))}
+          </Popover>
+        )}
+        <Popover label={t("reporting.additional")}>
+          {availableSections
+            .filter(
+              (candidate) =>
+                candidate === "questions" ||
+                candidate === "coverage" ||
+                candidate === "delivery",
+            )
+            .map((candidate) => (
+              <Button
+                key={candidate}
+                variant="link"
+                onClick={() => openAnalyticsSection(candidate)}
+              >
+                {t(
+                  candidate === "questions"
+                    ? "analytics.sectionQuestions"
+                    : candidate === "coverage"
+                      ? "analytics.sectionCoverage"
+                      : "analytics.sectionDelivery",
+                )}
+              </Button>
+            ))}
+        </Popover>
+        {selection &&
+        context.data &&
+        scopePickerApplies(section, reportingEnabled) ? (
+          <div className="analytics-scope-control">
+            <AnalyticsScopePicker
+              scopes={context.data.allowed_scopes}
+              selected={selection.scope}
+              onSelect={selectScope}
+            />
+          </div>
         ) : null}
         {section === "forecast" && selection && !reportingEnabled ? (
           <ForecastShareActions target="forecast" scope={selection.scope} />
@@ -1126,18 +1202,11 @@ function SectionBody({
       ) : null;
     case "forecast":
       return selection && context ? (
-        <>
-          {reportingEnabled ? (
-            <ReportingForecastGraphs
-              key={JSON.stringify(selection.scope)}
-              scope={selection.scope}
-            />
-          ) : null}
-          <ForecastView
-            selection={selection}
-            canSubmit={context.capabilities.submit_manager_forecast}
-          />
-        </>
+        <ForecastView
+          reportingEnabled={reportingEnabled}
+          selection={selection}
+          canSubmit={context.capabilities.submit_manager_forecast}
+        />
       ) : null;
     default:
       return (
@@ -1167,12 +1236,7 @@ function PerformanceSection({
   locale: Locale;
 }>) {
   if (enabled)
-    return selection ? (
-      <ReportingOverview
-        key={JSON.stringify(selection.scope)}
-        scope={selection.scope}
-      />
-    ) : null;
+    return selection ? <ReportingOverview scope={selection.scope} /> : null;
   return (
     <>
       {SECTION_REPORTS.performance.map((report) => (
@@ -1185,4 +1249,13 @@ function PerformanceSection({
       ))}
     </>
   );
+}
+
+function scopePickerApplies(
+  section: Section,
+  reportingEnabled: boolean,
+): boolean {
+  return section === "performance"
+    ? reportingEnabled
+    : ["forecast", "questions"].includes(section);
 }

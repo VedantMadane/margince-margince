@@ -495,6 +495,10 @@ func (stubs) Logout(w nethttp.ResponseWriter, r *nethttp.Request) {
 	httperr.NotImplemented(w, r, "Logout")
 }
 
+func (stubs) CompleteMfaChallenge(w nethttp.ResponseWriter, r *nethttp.Request) {
+	httperr.NotImplemented(w, r, "CompleteMfaChallenge")
+}
+
 func (stubs) OidcSignInCallback(w nethttp.ResponseWriter, r *nethttp.Request, provider crmcontracts.OidcSignInCallbackParamsProvider, params crmcontracts.OidcSignInCallbackParams) {
 	httperr.NotImplemented(w, r, "OidcSignInCallback")
 }
@@ -1339,6 +1343,10 @@ func (stubs) RenameCustomField(w nethttp.ResponseWriter, r *nethttp.Request, id 
 	httperr.NotImplemented(w, r, "RenameCustomField")
 }
 
+func (stubs) ListCustomFieldLiveLists(w nethttp.ResponseWriter, r *nethttp.Request, id crmcontracts.Id) {
+	httperr.NotImplemented(w, r, "ListCustomFieldLiveLists")
+}
+
 func (stubs) UpdateCustomFieldOptions(w nethttp.ResponseWriter, r *nethttp.Request, id crmcontracts.Id, params crmcontracts.UpdateCustomFieldOptionsParams) {
 	httperr.NotImplemented(w, r, "UpdateCustomFieldOptions")
 }
@@ -1609,6 +1617,10 @@ func (stubs) GetFieldHistory(w nethttp.ResponseWriter, r *nethttp.Request, param
 
 func (stubs) PreviewFilter(w nethttp.ResponseWriter, r *nethttp.Request) {
 	httperr.NotImplemented(w, r, "PreviewFilter")
+}
+
+func (stubs) ProposeFilter(w nethttp.ResponseWriter, r *nethttp.Request) {
+	httperr.NotImplemented(w, r, "ProposeFilter")
 }
 
 func (stubs) GetFilterVocabulary(w nethttp.ResponseWriter, r *nethttp.Request, params crmcontracts.GetFilterVocabularyParams) {
@@ -1947,6 +1959,10 @@ func (stubs) RestoreList(w nethttp.ResponseWriter, r *nethttp.Request, id crmcon
 	httperr.NotImplemented(w, r, "RestoreList")
 }
 
+func (stubs) VisitList(w nethttp.ResponseWriter, r *nethttp.Request, id crmcontracts.Id) {
+	httperr.NotImplemented(w, r, "VisitList")
+}
+
 func (stubs) GetMagic(w nethttp.ResponseWriter, r *nethttp.Request, params crmcontracts.GetMagicParams) {
 	httperr.NotImplemented(w, r, "GetMagic")
 }
@@ -2023,12 +2039,36 @@ func (stubs) SaveMyLocale(w nethttp.ResponseWriter, r *nethttp.Request) {
 	httperr.NotImplemented(w, r, "SaveMyLocale")
 }
 
+func (stubs) DisableMyMfa(w nethttp.ResponseWriter, r *nethttp.Request) {
+	httperr.NotImplemented(w, r, "DisableMyMfa")
+}
+
+func (stubs) GetMyMfa(w nethttp.ResponseWriter, r *nethttp.Request) {
+	httperr.NotImplemented(w, r, "GetMyMfa")
+}
+
+func (stubs) StartMyTotpEnrolment(w nethttp.ResponseWriter, r *nethttp.Request) {
+	httperr.NotImplemented(w, r, "StartMyTotpEnrolment")
+}
+
+func (stubs) ConfirmMyTotp(w nethttp.ResponseWriter, r *nethttp.Request) {
+	httperr.NotImplemented(w, r, "ConfirmMyTotp")
+}
+
 func (stubs) ListNotificationPreferences(w nethttp.ResponseWriter, r *nethttp.Request) {
 	httperr.NotImplemented(w, r, "ListNotificationPreferences")
 }
 
 func (stubs) SaveNotificationPreference(w nethttp.ResponseWriter, r *nethttp.Request) {
 	httperr.NotImplemented(w, r, "SaveNotificationPreference")
+}
+
+func (stubs) ListMySessions(w nethttp.ResponseWriter, r *nethttp.Request) {
+	httperr.NotImplemented(w, r, "ListMySessions")
+}
+
+func (stubs) RevokeMySession(w nethttp.ResponseWriter, r *nethttp.Request, sessionId openapi_types.UUID) {
+	httperr.NotImplemented(w, r, "RevokeMySession")
 }
 
 func (stubs) GetMyWorkingHours(w nethttp.ResponseWriter, r *nethttp.Request) {
@@ -2805,6 +2845,14 @@ func (stubs) ReactivateUser(w nethttp.ResponseWriter, r *nethttp.Request, id crm
 
 func (stubs) ChangeUserRole(w nethttp.ResponseWriter, r *nethttp.Request, id crmcontracts.Id) {
 	httperr.NotImplemented(w, r, "ChangeUserRole")
+}
+
+func (stubs) ListUserSessions(w nethttp.ResponseWriter, r *nethttp.Request, id crmcontracts.Id) {
+	httperr.NotImplemented(w, r, "ListUserSessions")
+}
+
+func (stubs) RevokeUserSession(w nethttp.ResponseWriter, r *nethttp.Request, id crmcontracts.Id, sessionId openapi_types.UUID) {
+	httperr.NotImplemented(w, r, "RevokeUserSession")
 }
 
 func (stubs) ListSavedViews(w nethttp.ResponseWriter, r *nethttp.Request, params crmcontracts.ListSavedViewsParams) {

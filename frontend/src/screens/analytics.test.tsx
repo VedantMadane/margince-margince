@@ -16,23 +16,15 @@ type Stage = components["schemas"]["Stage"];
 import { AnalyticsScreen, buildStageAggregates } from "./analytics";
 import { sectionFromAddress } from "./analytics.address";
 
-// D2 acceptance: a report picker over deals-by-stage (unchanged), forecast
-// (unweighted category tiles + a weighted-vs-unweighted banner), and
-// open-deals-per-company (a DataTable) — all driven by the same typed
-// `runReport` POST, keyed on the report.
-
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
 });
 
-// The pipeline reports live behind their own tab now, and Forecast is the
-// section a reader lands on. A test that wants deals-by-stage opens the tab
-// the way a reader does, rather than asserting against a default that moved.
 async function openPipeline() {
   await userEvent
     .setup()
-    .click(await screen.findByRole("button", { name: "Deals" }));
+    .click(await screen.findByRole("button", { name: "Pipeline analysis" }));
 }
 
 async function openPerformance() {
@@ -71,20 +63,19 @@ describe("the delivery section", () => {
     render(<AnalyticsScreen />);
     await userEvent
       .setup()
+      .click(await screen.findByRole("button", { name: "More analysis" }));
+    await userEvent
+      .setup()
       .click(await screen.findByRole("button", { name: "Delivery" }));
 
-    // Server-converted money, only formatted here.
     expect(
       await screen.findByText(formatMoney(400000, "EUR", "en")),
     ).toBeTruthy();
-    // The project name is the way into the project, not a dead label.
     const link = await screen.findByRole("link", { name: "Rollout Nord" });
     expect(link.getAttribute("href")).toBe("#/projects/p1");
-    // Nothing quiet is the good answer, said in words.
     expect(
       screen.getByText("No project in delivery has gone quiet."),
     ).toBeTruthy();
-    // An empty plan takes the report's own declared defaults server-side.
     const phase = bodies.find((sent) => sent.key === "projects-by-phase");
     expect(phase?.body.group_by).toEqual([]);
     expect(phase?.body.aggregates).toEqual([]);
@@ -109,12 +100,13 @@ describe("the delivery section", () => {
     render(<AnalyticsScreen />);
     await userEvent
       .setup()
+      .click(await screen.findByRole("button", { name: "More analysis" }));
+    await userEvent
+      .setup()
       .click(await screen.findByRole("button", { name: "Delivery" }));
     const link = await screen.findByRole("link", { name: "Rollout Süd" });
     expect(link.getAttribute("href")).toBe("#/projects/p9");
-    // The instant is formatted in the frame's own zone, not left as ISO.
     expect(screen.queryByText("2026-08-20T09:00:00Z")).toBeNull();
-    // A young install's other two cards say so in words.
     expect(
       (await screen.findAllByText("No projects yet. A won deal creates one."))
         .length,
@@ -147,19 +139,22 @@ describe("the data coverage section", () => {
     render(<AnalyticsScreen />);
     await userEvent
       .setup()
+      .click(await screen.findByRole("button", { name: "More analysis" }));
+    await userEvent
+      .setup()
       .click(await screen.findByRole("button", { name: "Data coverage" }));
     expect(await screen.findByText("Checked")).toBeTruthy();
-    // The source column speaks the reader's words, not the wire's.
     expect(screen.getByText("mailbox")).toBeTruthy();
-    // An unconnected source is a decision, not a repair — its words say so.
     expect(screen.getByText("Not connected")).toBeTruthy();
-    // Only the read source carries a date; the unread one shows absence.
     expect(screen.getByText("—")).toBeTruthy();
   });
 
   it("says a fresh installation was never looked at, in words", async () => {
     vi.stubGlobal("fetch", reportsStub({ coverage: { status: 404 } }));
     render(<AnalyticsScreen />);
+    await userEvent
+      .setup()
+      .click(await screen.findByRole("button", { name: "More analysis" }));
     await userEvent
       .setup()
       .click(await screen.findByRole("button", { name: "Data coverage" }));
@@ -174,7 +169,7 @@ describe("the data coverage section", () => {
     const fetch = reportsStub({ coverage: { status: 403 } });
     vi.stubGlobal("fetch", fetch);
     render(<AnalyticsScreen />);
-    await screen.findByRole("button", { name: "Deals" });
+    await screen.findByRole("button", { name: "Pipeline analysis" });
     await waitFor(() =>
       expect(
         screen.queryByRole("button", { name: "Data coverage" }),
@@ -210,13 +205,11 @@ describe("the my-outcomes section", () => {
       .setup()
       .click(await screen.findByRole("button", { name: "My outcomes" }));
 
-    // The meetings card states current standing, not a funnel.
     expect(
       await screen.findByText(en["analytics.meetingsAsTheyStand"]),
     ).toBeTruthy();
     expect(screen.getByText("Held")).toBeTruthy();
     expect(screen.getByText("3")).toBeTruthy();
-    // A status with no meetings is an honest zero, not an absent tile.
     expect(screen.getByText("No-show")).toBeTruthy();
 
     // The meetings question is pinned to the seat: hosted by this user, and
@@ -301,7 +294,7 @@ describe("the my-outcomes section", () => {
   it("hides the tab when the lens covers more than one seat", async () => {
     vi.stubGlobal("fetch", reportsStub());
     render(<AnalyticsScreen />);
-    await screen.findByRole("button", { name: "Deals" });
+    await screen.findByRole("button", { name: "Pipeline analysis" });
     expect(screen.queryByRole("button", { name: "My outcomes" })).toBeNull();
   });
 });
@@ -402,7 +395,9 @@ describe("AnalyticsScreen", () => {
       }),
     );
     render(<AnalyticsScreen />);
-    await userEvent.click(await screen.findByRole("button", { name: "Deals" }));
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Pipeline analysis" }),
+    );
     await waitFor(() => expect(screen.getByText("Commit")).toBeTruthy());
     expect(
       bodies.some(
@@ -447,7 +442,9 @@ describe("AnalyticsScreen", () => {
       }),
     );
     render(<AnalyticsScreen />);
-    await userEvent.click(await screen.findByRole("button", { name: "Deals" }));
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Pipeline analysis" }),
+    );
     await waitFor(() => expect(screen.getByText("Slipped")).toBeTruthy());
   });
 
@@ -501,7 +498,9 @@ describe("AnalyticsScreen", () => {
       }),
     );
     render(<AnalyticsScreen />);
-    await userEvent.click(await screen.findByRole("button", { name: "Deals" }));
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Pipeline analysis" }),
+    );
     await waitFor(() => expect(screen.getByText("o1")).toBeTruthy());
   });
 
@@ -512,7 +511,9 @@ describe("AnalyticsScreen", () => {
   // proves the link appears would pass a version that always draws it.
   describe("a count opens exactly the deals it counted", () => {
     const openPipelineTab = async () =>
-      userEvent.click(await screen.findByRole("button", { name: "Deals" }));
+      userEvent.click(
+        await screen.findByRole("button", { name: "Pipeline analysis" }),
+      );
 
     it("addresses a company trading in one currency, and says the deals are open", async () => {
       vi.stubGlobal(
@@ -719,7 +720,7 @@ describe("reports never sum money across currencies", () => {
   it("renders a forecast category with no deals as absent rather than as zero euros", async () => {
     vi.stubGlobal("fetch", reportsStub({ forecastRows: [] }));
     render(<AnalyticsScreen />);
-    await userEvent.setup().click(await screen.findByText("Deals"));
+    await userEvent.setup().click(await screen.findByText("Pipeline analysis"));
     await waitFor(() =>
       expect(screen.getAllByText(MONEY_ABSENT).length).toBeGreaterThan(0),
     );
@@ -898,7 +899,7 @@ describe("reports never sum money across currencies", () => {
       }),
     );
     render(<AnalyticsScreen />);
-    await userEvent.setup().click(await screen.findByText("Deals"));
+    await userEvent.setup().click(await screen.findByText("Pipeline analysis"));
 
     expect(
       await screen.findByText(formatMoneyCompact(202_720_000, "EUR", "en")),
@@ -941,7 +942,7 @@ describe("reports never sum money across currencies", () => {
       }),
     );
     render(<AnalyticsScreen />);
-    await userEvent.setup().click(await screen.findByText("Deals"));
+    await userEvent.setup().click(await screen.findByText("Pipeline analysis"));
 
     // Both categories, both figures, in the one base currency and compact.
     const compact = (minor: number) => formatMoneyCompact(minor, "EUR", "en");
@@ -985,7 +986,7 @@ describe("reports never sum money across currencies", () => {
       }),
     );
     render(<AnalyticsScreen />);
-    await userEvent.setup().click(await screen.findByText("Deals"));
+    await userEvent.setup().click(await screen.findByText("Pipeline analysis"));
 
     expect(
       await screen.findByText(formatMoneyCompact(2_500_000, "EUR", "en")),
@@ -1021,7 +1022,7 @@ describe("reports never sum money across currencies", () => {
       }),
     );
     render(<AnalyticsScreen />);
-    await userEvent.setup().click(await screen.findByText("Deals"));
+    await userEvent.setup().click(await screen.findByText("Pipeline analysis"));
     await waitFor(() =>
       expect(
         screen.getByText(formatMoneyCompact(1000, "EUR", "en")),
@@ -1056,9 +1057,6 @@ describe("sectionFromAddress", () => {
   });
 });
 
-// Pipeline draws deals-by-stage and open-deals-per-company, so its captions
-// come in pairs. Named rather than written as a bare 2, so a third report
-// added to the section reads as a deliberate change here.
 const SECTION_REPORT_COUNT_PIPELINE = 3;
 
 describe("the report frame", () => {

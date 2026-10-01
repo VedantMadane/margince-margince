@@ -2317,6 +2317,30 @@ func (e AuthorizationSeatType) Valid() bool {
 	}
 }
 
+// Defines values for AutomationPausedReason.
+const (
+	AutomationPausedReasonBurst           AutomationPausedReason = "burst"
+	AutomationPausedReasonListArchived    AutomationPausedReason = "list_archived"
+	AutomationPausedReasonListInvalid     AutomationPausedReason = "list_invalid"
+	AutomationPausedReasonListUnavailable AutomationPausedReason = "list_unavailable"
+)
+
+// Valid indicates whether the value is a known member of the AutomationPausedReason enum.
+func (e AutomationPausedReason) Valid() bool {
+	switch e {
+	case AutomationPausedReasonBurst:
+		return true
+	case AutomationPausedReasonListArchived:
+		return true
+	case AutomationPausedReasonListInvalid:
+		return true
+	case AutomationPausedReasonListUnavailable:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for AutomationStatus.
 const (
 	AutomationStatusEnabled AutomationStatus = "enabled"
@@ -2817,6 +2841,7 @@ const (
 	BulkRecordTypeCompany BulkRecordType = "company"
 	BulkRecordTypeContact BulkRecordType = "contact"
 	BulkRecordTypeDeal    BulkRecordType = "deal"
+	BulkRecordTypeLead    BulkRecordType = "lead"
 )
 
 // Valid indicates whether the value is a known member of the BulkRecordType enum.
@@ -2827,6 +2852,8 @@ func (e BulkRecordType) Valid() bool {
 	case BulkRecordTypeContact:
 		return true
 	case BulkRecordTypeDeal:
+		return true
+	case BulkRecordTypeLead:
 		return true
 	default:
 		return false
@@ -2883,22 +2910,31 @@ func (e BulkSkipReason) Valid() bool {
 
 // Defines values for BulkVerb.
 const (
+	BulkVerbAddTag         BulkVerb = "add_tag"
 	BulkVerbAddToList      BulkVerb = "add_to_list"
 	BulkVerbArchive        BulkVerb = "archive"
+	BulkVerbCreateTask     BulkVerb = "create_task"
 	BulkVerbReassignOwner  BulkVerb = "reassign_owner"
 	BulkVerbRemoveFromList BulkVerb = "remove_from_list"
+	BulkVerbRemoveTag      BulkVerb = "remove_tag"
 )
 
 // Valid indicates whether the value is a known member of the BulkVerb enum.
 func (e BulkVerb) Valid() bool {
 	switch e {
+	case BulkVerbAddTag:
+		return true
 	case BulkVerbAddToList:
 		return true
 	case BulkVerbArchive:
 		return true
+	case BulkVerbCreateTask:
+		return true
 	case BulkVerbReassignOwner:
 		return true
 	case BulkVerbRemoveFromList:
+		return true
+	case BulkVerbRemoveTag:
 		return true
 	default:
 		return false
@@ -7798,6 +7834,27 @@ func (e CustomFieldType) Valid() bool {
 	}
 }
 
+// Defines values for CustomFieldLiveListSharing.
+const (
+	CustomFieldLiveListSharingPrivate   CustomFieldLiveListSharing = "private"
+	CustomFieldLiveListSharingTeam      CustomFieldLiveListSharing = "team"
+	CustomFieldLiveListSharingWorkspace CustomFieldLiveListSharing = "workspace"
+)
+
+// Valid indicates whether the value is a known member of the CustomFieldLiveListSharing enum.
+func (e CustomFieldLiveListSharing) Valid() bool {
+	switch e {
+	case CustomFieldLiveListSharingPrivate:
+		return true
+	case CustomFieldLiveListSharingTeam:
+		return true
+	case CustomFieldLiveListSharingWorkspace:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for DataSubjectRequestKind.
 const (
 	DataSubjectRequestKindAccess  DataSubjectRequestKind = "access"
@@ -8830,6 +8887,105 @@ func (e FilterPreviewRequestResource) Valid() bool {
 	case FilterPreviewRequestResourceLead:
 		return true
 	case FilterPreviewRequestResourceProject:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for FilterProposalResource.
+const (
+	FilterProposalResourceCompany FilterProposalResource = "company"
+	FilterProposalResourceContact FilterProposalResource = "contact"
+	FilterProposalResourceDeal    FilterProposalResource = "deal"
+	FilterProposalResourceLead    FilterProposalResource = "lead"
+)
+
+// Valid indicates whether the value is a known member of the FilterProposalResource enum.
+func (e FilterProposalResource) Valid() bool {
+	switch e {
+	case FilterProposalResourceCompany:
+		return true
+	case FilterProposalResourceContact:
+		return true
+	case FilterProposalResourceDeal:
+		return true
+	case FilterProposalResourceLead:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for FilterProposalRequestLocale.
+const (
+	FilterProposalRequestLocaleDe FilterProposalRequestLocale = "de"
+	FilterProposalRequestLocaleEn FilterProposalRequestLocale = "en"
+	FilterProposalRequestLocaleVi FilterProposalRequestLocale = "vi"
+)
+
+// Valid indicates whether the value is a known member of the FilterProposalRequestLocale enum.
+func (e FilterProposalRequestLocale) Valid() bool {
+	switch e {
+	case FilterProposalRequestLocaleDe:
+		return true
+	case FilterProposalRequestLocaleEn:
+		return true
+	case FilterProposalRequestLocaleVi:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for FilterProposalRequestResource.
+const (
+	FilterProposalRequestResourceCompany FilterProposalRequestResource = "company"
+	FilterProposalRequestResourceContact FilterProposalRequestResource = "contact"
+	FilterProposalRequestResourceDeal    FilterProposalRequestResource = "deal"
+	FilterProposalRequestResourceLead    FilterProposalRequestResource = "lead"
+)
+
+// Valid indicates whether the value is a known member of the FilterProposalRequestResource enum.
+func (e FilterProposalRequestResource) Valid() bool {
+	switch e {
+	case FilterProposalRequestResourceCompany:
+		return true
+	case FilterProposalRequestResourceContact:
+		return true
+	case FilterProposalRequestResourceDeal:
+		return true
+	case FilterProposalRequestResourceLead:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for FilterProposalUnsupportedCode.
+const (
+	FilterProposalUnsupportedCodeNotExpressible     FilterProposalUnsupportedCode = "not_expressible"
+	FilterProposalUnsupportedCodeOperatorNotAllowed FilterProposalUnsupportedCode = "operator_not_allowed"
+	FilterProposalUnsupportedCodeTooManyConditions  FilterProposalUnsupportedCode = "too_many_conditions"
+	FilterProposalUnsupportedCodeUnknownField       FilterProposalUnsupportedCode = "unknown_field"
+	FilterProposalUnsupportedCodeValueNotAllowed    FilterProposalUnsupportedCode = "value_not_allowed"
+	FilterProposalUnsupportedCodeValueNotVerifiable FilterProposalUnsupportedCode = "value_not_verifiable"
+)
+
+// Valid indicates whether the value is a known member of the FilterProposalUnsupportedCode enum.
+func (e FilterProposalUnsupportedCode) Valid() bool {
+	switch e {
+	case FilterProposalUnsupportedCodeNotExpressible:
+		return true
+	case FilterProposalUnsupportedCodeOperatorNotAllowed:
+		return true
+	case FilterProposalUnsupportedCodeTooManyConditions:
+		return true
+	case FilterProposalUnsupportedCodeUnknownField:
+		return true
+	case FilterProposalUnsupportedCodeValueNotAllowed:
+		return true
+	case FilterProposalUnsupportedCodeValueNotVerifiable:
 		return true
 	default:
 		return false
@@ -10395,9 +10551,10 @@ func (e ListEntityType) Valid() bool {
 
 // Defines values for ListHealth.
 const (
-	ListHealthInvalid   ListHealth = "invalid"
-	ListHealthOk        ListHealth = "ok"
-	ListHealthOwnerless ListHealth = "ownerless"
+	ListHealthInvalid      ListHealth = "invalid"
+	ListHealthOk           ListHealth = "ok"
+	ListHealthOwnerless    ListHealth = "ownerless"
+	ListHealthRetiredField ListHealth = "retired_field"
 )
 
 // Valid indicates whether the value is a known member of the ListHealth enum.
@@ -10408,6 +10565,8 @@ func (e ListHealth) Valid() bool {
 	case ListHealthOk:
 		return true
 	case ListHealthOwnerless:
+		return true
+	case ListHealthRetiredField:
 		return true
 	default:
 		return false
@@ -10453,6 +10612,27 @@ func (e ListSharing) Valid() bool {
 	}
 }
 
+// Defines values for ListCheckOutcome.
+const (
+	ListCheckOutcomeComplete ListCheckOutcome = "complete"
+	ListCheckOutcomeInvalid  ListCheckOutcome = "invalid"
+	ListCheckOutcomeTooLarge ListCheckOutcome = "too_large"
+)
+
+// Valid indicates whether the value is a known member of the ListCheckOutcome enum.
+func (e ListCheckOutcome) Valid() bool {
+	switch e {
+	case ListCheckOutcomeComplete:
+		return true
+	case ListCheckOutcomeInvalid:
+		return true
+	case ListCheckOutcomeTooLarge:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ListClauseVerdictJoin.
 const (
 	ListClauseVerdictJoinAnd ListClauseVerdictJoin = "and"
@@ -10473,13 +10653,34 @@ func (e ListClauseVerdictJoin) Valid() bool {
 
 // Defines values for ListDependencyKind.
 const (
-	ListDependencyKindExport ListDependencyKind = "export"
+	ListDependencyKindAutomation ListDependencyKind = "automation"
+	ListDependencyKindExport     ListDependencyKind = "export"
 )
 
 // Valid indicates whether the value is a known member of the ListDependencyKind enum.
 func (e ListDependencyKind) Valid() bool {
 	switch e {
+	case ListDependencyKindAutomation:
+		return true
 	case ListDependencyKindExport:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListDependencyRole.
+const (
+	ListDependencyRoleWatches ListDependencyRole = "watches"
+	ListDependencyRoleWrites  ListDependencyRole = "writes"
+)
+
+// Valid indicates whether the value is a known member of the ListDependencyRole enum.
+func (e ListDependencyRole) Valid() bool {
+	switch e {
+	case ListDependencyRoleWatches:
+		return true
+	case ListDependencyRoleWrites:
 		return true
 	default:
 		return false
@@ -10489,6 +10690,8 @@ func (e ListDependencyKind) Valid() bool {
 // Defines values for ListHistoryEntryKind.
 const (
 	ListHistoryEntryKindMemberAdded   ListHistoryEntryKind = "member_added"
+	ListHistoryEntryKindMemberEntered ListHistoryEntryKind = "member_entered"
+	ListHistoryEntryKindMemberLeft    ListHistoryEntryKind = "member_left"
 	ListHistoryEntryKindMemberRemoved ListHistoryEntryKind = "member_removed"
 	ListHistoryEntryKindRevised       ListHistoryEntryKind = "revised"
 )
@@ -10497,6 +10700,10 @@ const (
 func (e ListHistoryEntryKind) Valid() bool {
 	switch e {
 	case ListHistoryEntryKindMemberAdded:
+		return true
+	case ListHistoryEntryKindMemberEntered:
+		return true
+	case ListHistoryEntryKindMemberLeft:
 		return true
 	case ListHistoryEntryKindMemberRemoved:
 		return true
@@ -10509,8 +10716,11 @@ func (e ListHistoryEntryKind) Valid() bool {
 
 // Defines values for ListHistoryEntryReason.
 const (
+	ListHistoryEntryReasonAutomation     ListHistoryEntryReason = "automation"
 	ListHistoryEntryReasonBulk           ListHistoryEntryReason = "bulk"
 	ListHistoryEntryReasonChosen         ListHistoryEntryReason = "chosen"
+	ListHistoryEntryReasonEvaluated      ListHistoryEntryReason = "evaluated"
+	ListHistoryEntryReasonFilterChanged  ListHistoryEntryReason = "filter_changed"
 	ListHistoryEntryReasonRecordArchived ListHistoryEntryReason = "record_archived"
 	ListHistoryEntryReasonRecordRestored ListHistoryEntryReason = "record_restored"
 )
@@ -10518,9 +10728,15 @@ const (
 // Valid indicates whether the value is a known member of the ListHistoryEntryReason enum.
 func (e ListHistoryEntryReason) Valid() bool {
 	switch e {
+	case ListHistoryEntryReasonAutomation:
+		return true
 	case ListHistoryEntryReasonBulk:
 		return true
 	case ListHistoryEntryReasonChosen:
+		return true
+	case ListHistoryEntryReasonEvaluated:
+		return true
+	case ListHistoryEntryReasonFilterChanged:
 		return true
 	case ListHistoryEntryReasonRecordArchived:
 		return true
@@ -19684,6 +19900,27 @@ func (e ListListsParamsListType) Valid() bool {
 	}
 }
 
+// Defines values for ListListsParamsSharing.
+const (
+	ListListsParamsSharingPrivate   ListListsParamsSharing = "private"
+	ListListsParamsSharingTeam      ListListsParamsSharing = "team"
+	ListListsParamsSharingWorkspace ListListsParamsSharing = "workspace"
+)
+
+// Valid indicates whether the value is a known member of the ListListsParamsSharing enum.
+func (e ListListsParamsSharing) Valid() bool {
+	switch e {
+	case ListListsParamsSharingPrivate:
+		return true
+	case ListListsParamsSharingTeam:
+		return true
+	case ListListsParamsSharingWorkspace:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for GetOnboardingCompanyProposalParamsLocale.
 const (
 	GetOnboardingCompanyProposalParamsLocaleOnboardingProposalLocaleDE GetOnboardingCompanyProposalParamsLocale = "de"
@@ -22796,7 +23033,7 @@ type AttentionCounts struct {
 	// Commitments How many promises are due by the end of the installation's day — EVERY one this caller may see, not the bounded page below it, the same reading `planned` carries. A rep past the bound sees the soonest-due ones, which is the order the lane is in.
 	Commitments *int `json:"commitments,omitempty"`
 
-	// DealSuggestionsOpen Open Deal Scout suggestions this caller can see — every piece of whose evidence they may read. Absent when the reader may not read suggestions at all.
+	// DealSuggestionsOpen Open Deal Scout suggestions this caller can see — every piece of whose evidence they may read. Absent when the reader may not read suggestions at all, or when the suggestion read failed; the Worklist names a failed read as a `deal_suggestion` source in `sources_unavailable`.
 	DealSuggestionsOpen *int `json:"deal_suggestions_open,omitempty"`
 
 	// DidNotRun How many failed decisions this lane is CARRYING — the bounded page, as the other lanes report.
@@ -23401,6 +23638,27 @@ type AuthCapabilities struct {
 // and currency are NOT here — every role reads those, and repeating them in a document
 // governed by a narrower grant would make the same fact answer to two authorities.
 type AuthenticationPolicy struct {
+	// OidcGroupRoleMap The stored group→role grant map: each key an IdP group as the ID token's
+	// `groups` claim spells it, each value the system role key it grants at
+	// corporate sign-in. GRANT-ONLY: a role granted this way is never revoked by
+	// leaving the group — revocation stays a deliberate admin action — and an
+	// empty object means no group grants anything. It admits nobody who was not
+	// already invited.
+	OidcGroupRoleMap map[string]string `json:"oidc_group_role_map"`
+
+	// RequireMfa When true, a second factor is mandatory: a member with no confirmed authenticator
+	// is admitted only to the MFA enrolment routes until they set one up, the same
+	// confinement a forced password change uses. A member who already holds a factor is
+	// unaffected — they are challenged for it at sign-in either way.
+	RequireMfa bool `json:"require_mfa"`
+
+	// RequireSso When true, this installation has closed the password path: an ordinary member
+	// may sign in only through a configured provider. Admins keep the password form
+	// regardless — the break-glass that stops a broken IdP from locking out the admins
+	// who fix it. Password is still never removed as a mechanism; this decides who may
+	// use it, not whether it exists.
+	RequireSso bool `json:"require_sso"`
+
 	// SignInProviders Every provider this deployment mounted, each marked with whether the
 	// installation has chosen to offer it — which is a stored choice, not a
 	// guarantee the provider has working credentials. Password is never listed, and
@@ -23443,13 +23701,19 @@ type Automation struct {
 	Id        openapi_types.UUID `json:"id"`
 
 	// Key The catalog type this instance is built from.
-	Key       string                 `json:"key"`
-	Name      string                 `json:"name"`
-	Params    map[string]interface{} `json:"params"`
-	Status    AutomationStatus       `json:"status"`
-	UpdatedAt *time.Time             `json:"updated_at,omitempty"`
-	Version   *int                   `json:"version,omitempty"`
+	Key    string                 `json:"key"`
+	Name   string                 `json:"name"`
+	Params map[string]interface{} `json:"params"`
+
+	// PausedReason Why a rule paused itself: the list it watches or adds to was archived, its filter stopped working, its owner can no longer find it, or one check moved more than 100 records. Null for a rule running or paused by hand. Resuming clears it.
+	PausedReason *AutomationPausedReason `json:"paused_reason,omitempty"`
+	Status       AutomationStatus        `json:"status"`
+	UpdatedAt    *time.Time              `json:"updated_at,omitempty"`
+	Version      *int                    `json:"version,omitempty"`
 }
+
+// AutomationPausedReason Why a rule paused itself: the list it watches or adds to was archived, its filter stopped working, its owner can no longer find it, or one check moved more than 100 records. Null for a rule running or paused by hand. Resuming clears it.
+type AutomationPausedReason string
 
 // AutomationStatus defines model for Automation.Status.
 type AutomationStatus string
@@ -23892,13 +24156,23 @@ type BulkChangeExecuteRequest struct {
 	// OwnerId The new owner. Required for `reassign_owner` and refused for every other verb.
 	OwnerId *openapi_types.UUID `json:"owner_id,omitempty"`
 
-	// RecordType The kind of record a bulk change acts on. One change acts on one kind.
+	// RecordType The kind of record a bulk change acts on. One change acts on one kind. A lead takes every
+	// verb but `archive`: a lead leaves the queue by being disqualified, which has no bulk verb.
 	RecordType BulkRecordType `json:"record_type"`
+
+	// TagId The tag. Required for `add_tag` and `remove_tag` and refused for every other verb.
+	TagId *openapi_types.UUID `json:"tag_id,omitempty"`
+
+	// Task The task `create_task` files under every record of the selection.
+	Task *BulkTask `json:"task,omitempty"`
 
 	// Verb What a bulk change does to each record. `reassign_owner` hands the record to `owner_id`;
 	// `archive` retires it exactly as the single-record archive does. `add_to_list` and
 	// `remove_from_list` add it to or take it off the Shortlist `list_id` names, exactly as
 	// `addListMember` and `removeListMember` do, and change nothing on the record itself.
+	// `add_tag` and `remove_tag` put the tag `tag_id` names on the record or take it off, exactly
+	// as `applyTag` and `removeTag` do. `create_task` files one new task, described by `task`,
+	// under each record, exactly as `createTask` does.
 	Verb BulkVerb `json:"verb"`
 }
 
@@ -23919,7 +24193,8 @@ type BulkChangePreview struct {
 	// ExpiresAt When `confirm_token` stops being accepted.
 	ExpiresAt *time.Time `json:"expires_at,omitempty"`
 
-	// RecordType The kind of record a bulk change acts on. One change acts on one kind.
+	// RecordType The kind of record a bulk change acts on. One change acts on one kind. A lead takes every
+	// verb but `archive`: a lead leaves the queue by being disqualified, which has no bulk verb.
 	RecordType BulkRecordType `json:"record_type"`
 
 	// RequiresConfirmation True above 10 records: executing needs `confirm_token`.
@@ -23930,6 +24205,9 @@ type BulkChangePreview struct {
 	// `archive` retires it exactly as the single-record archive does. `add_to_list` and
 	// `remove_from_list` add it to or take it off the Shortlist `list_id` names, exactly as
 	// `addListMember` and `removeListMember` do, and change nothing on the record itself.
+	// `add_tag` and `remove_tag` put the tag `tag_id` names on the record or take it off, exactly
+	// as `applyTag` and `removeTag` do. `create_task` files one new task, described by `task`,
+	// under each record, exactly as `createTask` does.
 	Verb BulkVerb `json:"verb"`
 }
 
@@ -23946,13 +24224,23 @@ type BulkChangePreviewRequest struct {
 	// OwnerId The new owner. Required for `reassign_owner` and refused for every other verb.
 	OwnerId *openapi_types.UUID `json:"owner_id,omitempty"`
 
-	// RecordType The kind of record a bulk change acts on. One change acts on one kind.
+	// RecordType The kind of record a bulk change acts on. One change acts on one kind. A lead takes every
+	// verb but `archive`: a lead leaves the queue by being disqualified, which has no bulk verb.
 	RecordType BulkRecordType `json:"record_type"`
+
+	// TagId The tag. Required for `add_tag` and `remove_tag` and refused for every other verb.
+	TagId *openapi_types.UUID `json:"tag_id,omitempty"`
+
+	// Task The task `create_task` files under every record of the selection.
+	Task *BulkTask `json:"task,omitempty"`
 
 	// Verb What a bulk change does to each record. `reassign_owner` hands the record to `owner_id`;
 	// `archive` retires it exactly as the single-record archive does. `add_to_list` and
 	// `remove_from_list` add it to or take it off the Shortlist `list_id` names, exactly as
 	// `addListMember` and `removeListMember` do, and change nothing on the record itself.
+	// `add_tag` and `remove_tag` put the tag `tag_id` names on the record or take it off, exactly
+	// as `applyTag` and `removeTag` do. `create_task` files one new task, described by `task`,
+	// under each record, exactly as `createTask` does.
 	Verb BulkVerb `json:"verb"`
 }
 
@@ -24009,9 +24297,16 @@ type BulkOperation struct {
 	// OwnerId The new owner a reassignment named.
 	OwnerId *openapi_types.UUID `json:"owner_id,omitempty"`
 
-	// RecordType The kind of record a bulk change acts on. One change acts on one kind.
+	// RecordType The kind of record a bulk change acts on. One change acts on one kind. A lead takes every
+	// verb but `archive`: a lead leaves the queue by being disqualified, which has no bulk verb.
 	RecordType BulkRecordType `json:"record_type"`
 	Skipped    []BulkSkip     `json:"skipped"`
+
+	// TagId The tag a tag verb named.
+	TagId *openapi_types.UUID `json:"tag_id,omitempty"`
+
+	// Task The task `create_task` files under every record of the selection.
+	Task *BulkTask `json:"task,omitempty"`
 
 	// UndoOf Set on an undo: the change it put back.
 	UndoOf *openapi_types.UUID `json:"undo_of,omitempty"`
@@ -24023,6 +24318,9 @@ type BulkOperation struct {
 	// `archive` retires it exactly as the single-record archive does. `add_to_list` and
 	// `remove_from_list` add it to or take it off the Shortlist `list_id` names, exactly as
 	// `addListMember` and `removeListMember` do, and change nothing on the record itself.
+	// `add_tag` and `remove_tag` put the tag `tag_id` names on the record or take it off, exactly
+	// as `applyTag` and `removeTag` do. `create_task` files one new task, described by `task`,
+	// under each record, exactly as `createTask` does.
 	Verb BulkVerb `json:"verb"`
 }
 
@@ -24033,9 +24331,16 @@ type BulkRecordState struct {
 	// Listed For a list verb, whether the record is on the Shortlist.
 	Listed  *bool               `json:"listed,omitempty"`
 	OwnerId *openapi_types.UUID `json:"owner_id"`
+
+	// Tagged For a tag verb, whether the record carries the tag.
+	Tagged *bool `json:"tagged,omitempty"`
+
+	// TaskId For `create_task`, the task filed under the record, once the change ran.
+	TaskId *openapi_types.UUID `json:"task_id,omitempty"`
 }
 
-// BulkRecordType The kind of record a bulk change acts on. One change acts on one kind.
+// BulkRecordType The kind of record a bulk change acts on. One change acts on one kind. A lead takes every
+// verb but `archive`: a lead leaves the queue by being disqualified, which has no bulk verb.
 type BulkRecordType string
 
 // BulkSampleRow One record the change would alter, as it is and as it would be.
@@ -24066,8 +24371,8 @@ type BulkSkip struct {
 
 	// Reason Why a record is left alone. `not_found`: the caller cannot see it, or it is already
 	// archived. `not_writable`: the caller may read it but not change it. `changed_since_preview`:
-	// its version moved since the caller read it. `no_change`: it already has this owner, or is
-	// already on (or already off) the Shortlist.
+	// its version moved since the caller read it. `no_change`: it already has this owner, is
+	// already on (or already off) the Shortlist, or already carries (or already lacks) the tag.
 	// `anchor_company`: it is the installation's own company, which is never archived.
 	// `not_previewed`: the preview whose token this execution presents did not list it.
 	// `refused`: a single-record rule refuses it; `code` says which.
@@ -24075,14 +24380,15 @@ type BulkSkip struct {
 	// An undo adds five. `changed_since_batch`: the record changed after the change being undone.
 	// `merged`: it was merged into another record. `erased`: its personal data was erased or
 	// purged. `value_taken`: another live record now holds its email or domain.
-	// `no_previous_owner`: it had no owner before the reassignment.
+	// `no_previous_owner`: it had no owner before the reassignment. Undoing `create_task` archives
+	// each task the change created, and skips one completed or edited since as `changed_since_batch`.
 	Reason BulkSkipReason `json:"reason"`
 }
 
 // BulkSkipReason Why a record is left alone. `not_found`: the caller cannot see it, or it is already
 // archived. `not_writable`: the caller may read it but not change it. `changed_since_preview`:
-// its version moved since the caller read it. `no_change`: it already has this owner, or is
-// already on (or already off) the Shortlist.
+// its version moved since the caller read it. `no_change`: it already has this owner, is
+// already on (or already off) the Shortlist, or already carries (or already lacks) the tag.
 // `anchor_company`: it is the installation's own company, which is never archived.
 // `not_previewed`: the preview whose token this execution presents did not list it.
 // `refused`: a single-record rule refuses it; `code` says which.
@@ -24090,8 +24396,21 @@ type BulkSkip struct {
 // An undo adds five. `changed_since_batch`: the record changed after the change being undone.
 // `merged`: it was merged into another record. `erased`: its personal data was erased or
 // purged. `value_taken`: another live record now holds its email or domain.
-// `no_previous_owner`: it had no owner before the reassignment.
+// `no_previous_owner`: it had no owner before the reassignment. Undoing `create_task` archives
+// each task the change created, and skips one completed or edited since as `changed_since_batch`.
 type BulkSkipReason string
+
+// BulkTask The task `create_task` files under every record of the selection.
+type BulkTask struct {
+	// AssigneeId Who owes it. Defaults to the caller; must name a colleague the caller may hand work to.
+	AssigneeId *openapi_types.UUID `json:"assignee_id,omitempty"`
+
+	// DueAt When it is due. Optional.
+	DueAt *time.Time `json:"due_at,omitempty"`
+
+	// Subject What has to be done, as one line.
+	Subject string `json:"subject"`
+}
 
 // BulkUndoRequest defines model for BulkUndoRequest.
 type BulkUndoRequest struct {
@@ -24103,6 +24422,9 @@ type BulkUndoRequest struct {
 // `archive` retires it exactly as the single-record archive does. `add_to_list` and
 // `remove_from_list` add it to or take it off the Shortlist `list_id` names, exactly as
 // `addListMember` and `removeListMember` do, and change nothing on the record itself.
+// `add_tag` and `remove_tag` put the tag `tag_id` names on the record or take it off, exactly
+// as `applyTag` and `removeTag` do. `create_task` files one new task, described by `task`,
+// under each record, exactly as `createTask` does.
 type BulkVerb string
 
 // BuyerRoomAccess Whether the session admits the caller to content right now. `live` — the room
@@ -26259,7 +26581,9 @@ type CompanyBriefEvidence struct {
 	// no name of their own (fact, profile_field) and never invented: the
 	// writer either already knew the name from the record it read, or
 	// leaves this out. Descriptive only — grounding checks type and id,
-	// never the name.
+	// never the name. Withheld with `quote` when the reader may not read
+	// the record's content: an activity's name is its subject line, which
+	// belongs to the message's audience.
 	Name *string `json:"name,omitempty"`
 
 	// Origin Where the words came from, in the writer's own language and the
@@ -28065,6 +28389,14 @@ type ConnectorContainer struct {
 // ConnectorContainers The folders or labels one mailbox has, as a picker offers them.
 type ConnectorContainers struct {
 	Containers []ConnectorContainer `json:"containers"`
+
+	// Truncated True when the walk stopped short of the whole mailbox — a page or depth budget
+	// spent before the folders ran out. The list is still worth showing: a long one
+	// that stops beats no list at all. What it must not do is read as complete, because
+	// somebody whose folder is missing would conclude the mailbox has no such folder
+	// rather than that nobody looked. Absent or false means the whole mailbox was
+	// enumerated.
+	Truncated *bool `json:"truncated,omitempty"`
 }
 
 // ConnectorContextTag The one existing word every record this connector creates is filed under, so
@@ -30547,6 +30879,24 @@ type CustomFieldListResponse struct {
 	Page PageInfo      `json:"page"`
 }
 
+// CustomFieldLiveList defines model for CustomFieldLiveList.
+type CustomFieldLiveList struct {
+	Id      openapi_types.UUID         `json:"id"`
+	Name    string                     `json:"name"`
+	Sharing CustomFieldLiveListSharing `json:"sharing"`
+}
+
+// CustomFieldLiveListSharing defines model for CustomFieldLiveList.Sharing.
+type CustomFieldLiveListSharing string
+
+// CustomFieldLiveLists The Live Lists whose filter names a custom field: the ones the caller may find by name, and how many more exist that they may not find.
+type CustomFieldLiveLists struct {
+	Lists []CustomFieldLiveList `json:"lists"`
+
+	// UnseenCount Live Lists that name the field but that this caller may not find.
+	UnseenCount int `json:"unseen_count"`
+}
+
 // DataCompleteness How much of what the band needs is actually present — with BOTH counts. "4 of 9"
 // and "4 of 40" are different claims and must never render identically (DOSS-AC-12).
 type DataCompleteness struct {
@@ -31817,6 +32167,15 @@ type EmailSummary struct {
 	// see — the row then says the direction alone rather than inventing a stranger.
 	Counterparty *string `json:"counterparty,omitempty"`
 
+	// CounterpartyContactId The contact `counterparty` names, when the party it was taken from resolved to one
+	// this caller may see. Present so a client can key a face on the RECORD rather than on
+	// the phrase: the phrase cannot be turned back into a contact, and matching it by name
+	// is wrong in both directions — a contact renamed since capture stops matching and
+	// draws a second colour, and two contacts sharing a name cannot be told apart. Absent
+	// when the far side resolved to no contact, which is a face the client has nothing
+	// better to key than the words.
+	CounterpartyContactId *openapi_types.UUID `json:"counterparty_contact_id,omitempty"`
+
 	// Delivery What happened to an outbound message, when this row is one and a delivery was
 	// staged for it. Absent on an inbound message, and on an outbound one logged
 	// rather than sent — neither has a delivery to report, which is a different
@@ -32234,6 +32593,75 @@ type FilterPreviewRequest struct {
 // FilterPreviewRequestResource defines model for FilterPreviewRequest.Resource.
 type FilterPreviewRequestResource string
 
+// FilterProposal Filter clauses proposed from plain words, already checked against the
+// caller's vocabulary. Not saved.
+type FilterProposal struct {
+	// Filter The proposed tree in the canonical filter shape `POST /filters/preview`
+	// and a dynamic list's `definition` take, with a group at its root. Null
+	// when nothing in the sentence could be expressed.
+	Filter *map[string]interface{} `json:"filter,omitempty"`
+
+	// ModelUsed The model that answered, when its provider named it.
+	ModelUsed *string                `json:"model_used,omitempty"`
+	Resource  FilterProposalResource `json:"resource"`
+
+	// Unsupported Every phrase that did not become a clause, and why.
+	Unsupported []FilterProposalUnsupported `json:"unsupported"`
+}
+
+// FilterProposalResource defines model for FilterProposal.Resource.
+type FilterProposalResource string
+
+// FilterProposalRequest A list described in plain words, to be turned into filter clauses.
+type FilterProposalRequest struct {
+	// Locale The reader's interface language, which the reasons in `unsupported` are
+	// written in. Absent means the installation's base language.
+	Locale   *FilterProposalRequestLocale  `json:"locale,omitempty"`
+	Resource FilterProposalRequestResource `json:"resource"`
+
+	// Text What the reader typed. Only this and the vocabulary reach the model.
+	Text string `json:"text"`
+}
+
+// FilterProposalRequestLocale The reader's interface language, which the reasons in `unsupported` are
+// written in. Absent means the installation's base language.
+type FilterProposalRequestLocale string
+
+// FilterProposalRequestResource defines model for FilterProposalRequest.Resource.
+type FilterProposalRequestResource string
+
+// FilterProposalUnsupported defines model for FilterProposalUnsupported.
+type FilterProposalUnsupported struct {
+	// Code `not_expressible` — the model found no field or operator for the phrase;
+	// `reason` is its explanation in the reader's language. Every other code is
+	// a clause the model proposed and the server dropped: a field this caller
+	// cannot filter on, an operator the field's type refuses, a value the field
+	// does not accept (including one outside a picklist's options), a picklist
+	// value this caller may not see the options of and so cannot be checked
+	// (`value_not_verifiable`), or a clause past the engine's limit. For those
+	// `reason` is the server's English detail, and `field` names the field so a
+	// client can say it in its own words.
+	Code FilterProposalUnsupportedCode `json:"code"`
+
+	// Field The field a dropped clause named. Absent for `not_expressible`.
+	Field *string `json:"field,omitempty"`
+
+	// Phrase The words of the request this is about.
+	Phrase string `json:"phrase"`
+	Reason string `json:"reason"`
+}
+
+// FilterProposalUnsupportedCode `not_expressible` — the model found no field or operator for the phrase;
+// `reason` is its explanation in the reader's language. Every other code is
+// a clause the model proposed and the server dropped: a field this caller
+// cannot filter on, an operator the field's type refuses, a value the field
+// does not accept (including one outside a picklist's options), a picklist
+// value this caller may not see the options of and so cannot be checked
+// (`value_not_verifiable`), or a clause past the engine's limit. For those
+// `reason` is the server's English detail, and `field` names the field so a
+// client can say it in its own words.
+type FilterProposalUnsupportedCode string
+
 // FilterVocabulary What a filter may say about one record type (LVS-EXT-8). Read from the
 // engine that evaluates filters, so the set here and the set the engine
 // accepts are the same set.
@@ -32342,13 +32770,13 @@ type FilterVocabularyFieldReferences string
 // a folded value has no fragment to match against.
 type FilterVocabularyFieldType string
 
-// FilteredExportRequest A filtered export request. Supply exactly ONE source: an inline `object` (with a required `filter`), a `view_id` (a saved view whose filter state is exported) or a `list_id` (a Live List whose filter is exported). The slice is always row-scoped to the caller through the one filter engine.
+// FilteredExportRequest A filtered export request. Supply exactly ONE source: an inline `object` (with a required `filter`), a `view_id` (a saved view whose filter state is exported) or a `list_id` (a Live List's matches or a Shortlist's members). The slice is always row-scoped to the caller through the one filter engine.
 type FilteredExportRequest struct {
 	// Filter The canonical §13.5 predicate tree (nested and/or groups over typed leaves). Required with `object`.
 	Filter *map[string]interface{}     `json:"filter,omitempty"`
 	Format FilteredExportRequestFormat `json:"format"`
 
-	// ListId Export the members of a Live List the caller may find, as its filter selects them now. Mutually exclusive with object/view_id.
+	// ListId Export the members of a list the caller may find — a Live List's as its filter selects them now, a Shortlist's as they were chosen — that the caller may see. Mutually exclusive with object/view_id.
 	ListId *openapi_types.UUID `json:"list_id,omitempty"`
 
 	// Object The object type to filter-export; requires `filter`. Mutually exclusive with view_id/list_id.
@@ -34606,28 +35034,39 @@ type List struct {
 	ArchivedAt *time.Time `json:"archived_at,omitempty"`
 
 	// CanEdit Whether this caller holds list authority over the list.
-	CanEdit   bool       `json:"can_edit"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CanEdit           bool               `json:"can_edit"`
+	ChangesSinceVisit *ListChangeSummary `json:"changes_since_visit,omitempty"`
+	CreatedAt         *time.Time         `json:"created_at,omitempty"`
 
 	// Definition A Live List's filter tree; null for a Shortlist.
 	Definition *map[string]interface{} `json:"definition,omitempty"`
 
-	// Dependencies What uses this list. Exports are listed as usage and block nothing.
+	// Dependencies What uses this list: the active automation rules that watch or add to it, then its filtered exports. Neither blocks a change; a rule pauses itself when its list is archived.
 	Dependencies *[]ListDependency `json:"dependencies,omitempty"`
 	EntityType   ListEntityType    `json:"entity_type"`
 
-	// Health `ownerless` when nobody looks after the list — no steward, or one who can no longer sign in — so somebody should take it over. `invalid` when a Live List's filter no longer compiles.
-	Health   ListHealth          `json:"health"`
-	Id       openapi_types.UUID  `json:"id"`
-	ListType ListListType        `json:"list_type"`
-	Name     string              `json:"name"`
-	OwnerId  *openapi_types.UUID `json:"owner_id,omitempty"`
+	// Health `ownerless` when nobody looks after the list — no steward, or one who can no longer sign in — so somebody should take it over. `invalid` when a Live List's filter no longer compiles. `retired_field` when a Live List's filter names a custom field that has been retired: the list still evaluates on the kept values, and its steward should replace the clause. `invalid` outranks `ownerless`, which outranks `retired_field`.
+	Health ListHealth         `json:"health"`
+	Id     openapi_types.UUID `json:"id"`
+
+	// JoinedSinceVisit On a single Live List read: the members this caller can see that a check saw joining since their last visit and that are still members, newest first, at most 500. Absent from the library.
+	JoinedSinceVisit *[]openapi_types.UUID `json:"joined_since_visit,omitempty"`
+
+	// LastCheck When a Live List's members were last compared with the check before. `complete` recorded who joined and left; `too_large` matched more records than one check may hold, so nothing was recorded; `invalid` could not evaluate the filter.
+	LastCheck *ListCheck          `json:"last_check,omitempty"`
+	ListType  ListListType        `json:"list_type"`
+	Name      string              `json:"name"`
+	OwnerId   *openapi_types.UUID `json:"owner_id,omitempty"`
 
 	// Purpose What the list is for, in the words of its steward.
 	Purpose *string `json:"purpose,omitempty"`
 
+	// RetiredFields The retired custom fields a Live List's filter names, by column name. Absent when it names none.
+	RetiredFields *[]string `json:"retired_fields,omitempty"`
+
 	// Sharing Who may FIND the list. Never who may see its members: every member read applies the reader's own row scope.
-	Sharing ListSharing `json:"sharing"`
+	Sharing        ListSharing `json:"sharing"`
+	SinceLastVisit *ListPulse  `json:"since_last_visit,omitempty"`
 
 	// StewardId Who looks after the list and may change it.
 	StewardId   *openapi_types.UUID `json:"steward_id,omitempty"`
@@ -34645,7 +35084,7 @@ type List struct {
 // ListEntityType defines model for List.EntityType.
 type ListEntityType string
 
-// ListHealth `ownerless` when nobody looks after the list — no steward, or one who can no longer sign in — so somebody should take it over. `invalid` when a Live List's filter no longer compiles.
+// ListHealth `ownerless` when nobody looks after the list — no steward, or one who can no longer sign in — so somebody should take it over. `invalid` when a Live List's filter no longer compiles. `retired_field` when a Live List's filter names a custom field that has been retired: the list still evaluates on the kept values, and its steward should replace the clause. `invalid` outranks `ownerless`, which outranks `retired_field`.
 type ListHealth string
 
 // ListListType defines model for List.ListType.
@@ -34653,6 +35092,42 @@ type ListListType string
 
 // ListSharing Who may FIND the list. Never who may see its members: every member read applies the reader's own row scope.
 type ListSharing string
+
+// ListChangeGroup The distinct records this caller can see that moved one way, and the newest three by name.
+type ListChangeGroup struct {
+	Count   int                 `json:"count"`
+	Records []ListChangedRecord `json:"records"`
+}
+
+// ListChangeSummary defines model for ListChangeSummary.
+type ListChangeSummary struct {
+	// FilterChanges How many times the filter changed since then.
+	FilterChanges int `json:"filter_changes"`
+
+	// Joined The distinct records this caller can see that moved one way, and the newest three by name.
+	Joined ListChangeGroup `json:"joined"`
+
+	// Left The distinct records this caller can see that moved one way, and the newest three by name.
+	Left ListChangeGroup `json:"left"`
+
+	// Since The visit the summary runs from.
+	Since time.Time `json:"since"`
+}
+
+// ListChangedRecord defines model for ListChangedRecord.
+type ListChangedRecord struct {
+	EntityId openapi_types.UUID `json:"entity_id"`
+	Name     *string            `json:"name,omitempty"`
+}
+
+// ListCheck When a Live List's members were last compared with the check before. `complete` recorded who joined and left; `too_large` matched more records than one check may hold, so nothing was recorded; `invalid` could not evaluate the filter.
+type ListCheck struct {
+	CheckedAt time.Time        `json:"checked_at"`
+	Outcome   ListCheckOutcome `json:"outcome"`
+}
+
+// ListCheckOutcome defines model for ListCheck.Outcome.
+type ListCheckOutcome string
 
 // ListClauseVerdict One node of a Live List's filter judged for one record: a group (`join`, `children`) or a clause (`field`, `op`, `operand`). `result` is null where SQL answers unknown, which the filter treats as not selected.
 type ListClauseVerdict struct {
@@ -34679,36 +35154,57 @@ type ListClauseVerdictJoin string
 type ListDependency struct {
 	Actor *string `json:"actor,omitempty"`
 
+	// AutomationId For an automation: the rule. Null for a caller who may not read automations.
+	AutomationId *openapi_types.UUID `json:"automation_id,omitempty"`
+
+	// AutomationName For an automation: its name. Null for a caller who may not read automations.
+	AutomationName *string `json:"automation_name,omitempty"`
+
 	// Blocking Whether it refuses a breaking change or archive of the list.
-	Blocking   bool               `json:"blocking"`
-	Kind       ListDependencyKind `json:"kind"`
-	OccurredAt time.Time          `json:"occurred_at"`
+	Blocking bool               `json:"blocking"`
+	Kind     ListDependencyKind `json:"kind"`
+
+	// OccurredAt When the export ran, or the rule was made.
+	OccurredAt time.Time `json:"occurred_at"`
+
+	// Role For an automation: whether it watches this Live List or adds to this Shortlist.
+	Role *ListDependencyRole `json:"role,omitempty"`
 }
 
 // ListDependencyKind defines model for ListDependency.Kind.
 type ListDependencyKind string
+
+// ListDependencyRole For an automation: whether it watches this Live List or adds to this Shortlist.
+type ListDependencyRole string
 
 // ListHistoryEntry defines model for ListHistoryEntry.
 type ListHistoryEntry struct {
 	Actor      string                  `json:"actor"`
 	ActorName  *string                 `json:"actor_name,omitempty"`
 	Definition *map[string]interface{} `json:"definition,omitempty"`
-	EntityId   *openapi_types.UUID     `json:"entity_id,omitempty"`
-	EntityType *string                 `json:"entity_type,omitempty"`
-	Id         openapi_types.UUID      `json:"id"`
-	Kind       ListHistoryEntryKind    `json:"kind"`
-	Name       *string                 `json:"name,omitempty"`
-	Note       *string                 `json:"note,omitempty"`
-	OccurredAt time.Time               `json:"occurred_at"`
-	Reason     *ListHistoryEntryReason `json:"reason,omitempty"`
-	Sharing    *string                 `json:"sharing,omitempty"`
-	Version    *int64                  `json:"version,omitempty"`
+
+	// DefinitionVersion For an observed change, the list version whose filter it was seen under.
+	DefinitionVersion *int64              `json:"definition_version,omitempty"`
+	EntityId          *openapi_types.UUID `json:"entity_id,omitempty"`
+	EntityType        *string             `json:"entity_type,omitempty"`
+	Id                openapi_types.UUID  `json:"id"`
+
+	// Kind `member_entered` and `member_left` are a Live List's observed changes, stamped with the check that saw them.
+	Kind       ListHistoryEntryKind `json:"kind"`
+	Name       *string              `json:"name,omitempty"`
+	Note       *string              `json:"note,omitempty"`
+	OccurredAt time.Time            `json:"occurred_at"`
+
+	// Reason `filter_changed` marks the first check after the filter changed; `automation` a record an automation rule added.
+	Reason  *ListHistoryEntryReason `json:"reason,omitempty"`
+	Sharing *string                 `json:"sharing,omitempty"`
+	Version *int64                  `json:"version,omitempty"`
 }
 
-// ListHistoryEntryKind defines model for ListHistoryEntry.Kind.
+// ListHistoryEntryKind `member_entered` and `member_left` are a Live List's observed changes, stamped with the check that saw them.
 type ListHistoryEntryKind string
 
-// ListHistoryEntryReason defines model for ListHistoryEntry.Reason.
+// ListHistoryEntryReason `filter_changed` marks the first check after the filter changed; `automation` a record an automation rule added.
 type ListHistoryEntryReason string
 
 // ListHistoryResponse defines model for ListHistoryResponse.
@@ -34775,6 +35271,27 @@ type ListMemberExplanationListType string
 type ListMemberListResponse struct {
 	Data []ListMember `json:"data"`
 	Page PageInfo     `json:"page"`
+}
+
+// ListPulse defines model for ListPulse.
+type ListPulse struct {
+	// Entered Records seen joining since then.
+	Entered int `json:"entered"`
+
+	// Left Records seen leaving since then.
+	Left int `json:"left"`
+
+	// Since The visit the counts run from.
+	Since time.Time `json:"since"`
+}
+
+// ListVisit defines model for ListVisit.
+type ListVisit struct {
+	ListId openapi_types.UUID `json:"list_id"`
+
+	// PreviousVisitAt Null on a first visit.
+	PreviousVisitAt *time.Time `json:"previous_visit_at,omitempty"`
+	VisitedAt       time.Time  `json:"visited_at"`
 }
 
 // LoginRequest defines model for LoginRequest.
@@ -34855,8 +35372,11 @@ type MagicLine struct {
 	// Consequence What this means for the reader, where the action has one to state. A key, not a sentence: the product ships three languages.
 	Consequence *string `json:"consequence,omitempty"`
 
-	// Count How many records this line stands for. One background job that did the same thing to many records is ONE line with a count, not one line per record: a receipt of 1,200 identical rows says nothing a reader can use. Absent means one; `entity` then names the most recent of them.
+	// Count How many records this line stands for. One background job that did the same thing to many records is ONE line with a count, not one line per record: a receipt of 1,200 identical rows says nothing a reader can use. Absent means one; `entity` then names the most recent of them. Read with `count_is_floor`, which says whether this number is the whole of it.
 	Count *int `json:"count,omitempty"`
+
+	// CountIsFloor True when the line's records were counted from a read that was cut short, so `count` is a lower bound and the job touched at least that many. Lines are grouped from the audit rows one read returns, and that read is capped; a job over more records than the cap reports the cap. Absent or false means the count is exact. A reader deciding whether a machine went too far needs to know which of the two they are looking at.
+	CountIsFloor *bool `json:"count_is_floor,omitempty"`
 
 	// Entity The record this line is about, where it names one.
 	Entity *MagicEntityRef `json:"entity,omitempty"`
@@ -35509,6 +36029,39 @@ type MergeTagsResult struct {
 	Moved int `json:"moved"`
 }
 
+// MfaChallenge Handed back by a 202 login when a second factor is required. The token is opaque, short-lived, and stands in for "this member passed the password step"; present it to POST /auth/mfa with a code.
+type MfaChallenge struct {
+	// MfaChallenge The opaque challenge to return with the authenticator code.
+	MfaChallenge string `json:"mfa_challenge"`
+}
+
+// MfaDisableRequest The step-up that proves the caller holds the factor being removed, not merely a session that could have been hijacked.
+type MfaDisableRequest struct {
+	// Code A current authenticator code, or an unused recovery code. Verified only when a CONFIRMED factor guards the account; the codeless cases the operation describes (nothing enrolled, or a merely PENDING enrolment) accept it empty.
+	Code string `json:"code"`
+}
+
+// MfaLoginRequest defines model for MfaLoginRequest.
+type MfaLoginRequest struct {
+	// Code A current authenticator code, or an unused recovery code.
+	Code string `json:"code"`
+
+	// MfaChallenge The challenge from the 202 login response.
+	MfaChallenge string `json:"mfa_challenge"`
+}
+
+// MfaStatus The caller's own multi-factor state.
+type MfaStatus struct {
+	// Confirmed Whether the factor is active — a pending enrolment is not yet a factor.
+	Confirmed bool `json:"confirmed"`
+
+	// Enrolled Whether an enrolment exists (pending or confirmed).
+	Enrolled bool `json:"enrolled"`
+
+	// RecoveryCodesLeft How many one-time recovery codes remain unused.
+	RecoveryCodesLeft int `json:"recovery_codes_left"`
+}
+
 // Money Money as integer minor-units + ISO-4217 currency. Never a float.
 type Money struct {
 	// AmountMinor Smallest currency unit (e.g. cents). 100000 EUR-cents = €1,000.00.
@@ -35799,6 +36352,29 @@ type MyAgentGrantState string
 type MyAgentGrants struct {
 	// Data One entry per scheduled agent, including the ones never answered.
 	Data []MyAgentGrant `json:"data"`
+}
+
+// MySession One session open under the caller's account, as its owner sees it. The opaque token never appears; `id` is the session's own handle, which `DELETE /me/sessions/{sessionId}` takes. No IP address — the device is the coarser view this list deliberately offers in its place.
+type MySession struct {
+	// Current Whether this is the session making the request.
+	Current bool `json:"current"`
+
+	// Id The session's handle, for revoking it.
+	Id openapi_types.UUID `json:"id"`
+
+	// LastActiveAt When a request was last admitted on it.
+	LastActiveAt time.Time `json:"last_active_at"`
+
+	// SignedInAt When the session was opened.
+	SignedInAt time.Time `json:"signed_in_at"`
+
+	// UserAgent The User-Agent the session was opened from, verbatim, or null when the client sent none. Shown as given; the client formats it.
+	UserAgent *string `json:"user_agent,omitempty"`
+}
+
+// MySessionList The caller's live sessions, newest activity first.
+type MySessionList struct {
+	Sessions []MySession `json:"sessions"`
 }
 
 // MyWorkingHoursResponse The caller's own working hours, and whether they are theirs or the fallback.
@@ -38304,6 +38880,12 @@ type RecordViewAck struct {
 // RecordViewAckEntityType defines model for RecordViewAck.EntityType.
 type RecordViewAckEntityType string
 
+// RecoveryCodes One-time recovery codes, shown exactly once at confirmation.
+type RecoveryCodes struct {
+	// RecoveryCodes Each code works once, for signing in when the authenticator is unavailable.
+	RecoveryCodes []string `json:"recovery_codes"`
+}
+
 // RefreshAccepted An async refresh was enqueued; proposals will appear in the approvals inbox.
 type RefreshAccepted struct {
 	Status RefreshAcceptedStatus `json:"status"`
@@ -38828,6 +39410,9 @@ type ReportingCaptureStatus struct {
 // ReportingCatalog defines model for ReportingCatalog.
 type ReportingCatalog struct {
 	Metrics []ReportingMetricDefinition `json:"metrics"`
+
+	// ScheduleReady Whether saved snapshots have the retention policy required for automatic publication. Present for schedule authors.
+	ScheduleReady *bool `json:"schedule_ready,omitempty"`
 }
 
 // ReportingChart defines model for ReportingChart.
@@ -39060,21 +39645,24 @@ type ReportingReport struct {
 	ArchivedAt     *time.Time              `json:"archived_at,omitempty"`
 	Audience       ReportingReportAudience `json:"audience"`
 	AudienceTeamId *openapi_types.UUID     `json:"audience_team_id,omitempty"`
-	Cadence        *string                 `json:"cadence,omitempty"`
+
+	// Cadence Comma-separated frequencies of all schedules including paused schedules.
+	Cadence *string `json:"cadence,omitempty"`
 
 	// CanManage Whether the current human may manage this report, before individual object-action grants.
-	CanManage        *bool              `json:"can_manage,omitempty"`
-	CreatedAt        time.Time          `json:"created_at"`
-	EditionCount     *int               `json:"edition_count,omitempty"`
-	Id               openapi_types.UUID `json:"id"`
-	LastStatus       *string            `json:"last_status,omitempty"`
-	LatestCapturedAt *time.Time         `json:"latest_captured_at,omitempty"`
-	Name             string             `json:"name"`
-	NextDueAt        *time.Time         `json:"next_due_at,omitempty"`
-	OwnerId          openapi_types.UUID `json:"owner_id"`
-	Revision         int64              `json:"revision"`
-	Selection        ReportingSelection `json:"selection"`
-	Version          int64              `json:"version"`
+	CanManage           *bool              `json:"can_manage,omitempty"`
+	CreatedAt           time.Time          `json:"created_at"`
+	EditionCount        *int               `json:"edition_count,omitempty"`
+	Id                  openapi_types.UUID `json:"id"`
+	LastStatus          *string            `json:"last_status,omitempty"`
+	LatestCapturedAt    *time.Time         `json:"latest_captured_at,omitempty"`
+	Name                string             `json:"name"`
+	NextDueAt           *time.Time         `json:"next_due_at,omitempty"`
+	OwnerId             openapi_types.UUID `json:"owner_id"`
+	PausedScheduleCount *int               `json:"paused_schedule_count,omitempty"`
+	Revision            int64              `json:"revision"`
+	Selection           ReportingSelection `json:"selection"`
+	Version             int64              `json:"version"`
 }
 
 // ReportingReportAudience defines model for ReportingReport.Audience.
@@ -39167,11 +39755,14 @@ type ReportingTarget struct {
 	AllocationDifference *int64               `json:"allocation_difference,omitempty"`
 	CreatedAt            time.Time            `json:"created_at"`
 	Definition           ReportingTargetInput `json:"definition"`
-	Id                   openapi_types.UUID   `json:"id"`
-	Interval             ReportingWindow      `json:"interval"`
-	Revision             int64                `json:"revision"`
-	Unit                 string               `json:"unit"`
-	Version              int64                `json:"version"`
+
+	// History All definitions including the current revision, returned in revision order on the individual target read.
+	History  *[]ReportingTargetInput `json:"history,omitempty"`
+	Id       openapi_types.UUID      `json:"id"`
+	Interval ReportingWindow         `json:"interval"`
+	Revision int64                   `json:"revision"`
+	Unit     string                  `json:"unit"`
+	Version  int64                   `json:"version"`
 }
 
 // ReportingTargetInput defines model for ReportingTargetInput.
@@ -39181,8 +39772,11 @@ type ReportingTargetInput struct {
 	PeriodStart openapi_types.Date             `json:"period_start"`
 	PipelineId  *openapi_types.UUID            `json:"pipeline_id,omitempty"`
 	Reason      string                         `json:"reason"`
-	Scope       ReportingScope                 `json:"scope"`
-	Value       int64                          `json:"value"`
+
+	// Retired Excludes this allocation from live progress while preserving its revisions and saved snapshots.
+	Retired *bool          `json:"retired,omitempty"`
+	Scope   ReportingScope `json:"scope"`
+	Value   int64          `json:"value"`
 }
 
 // ReportingTargetInputPeriodKind defines model for ReportingTargetInput.PeriodKind.
@@ -40588,7 +41182,7 @@ type SettingsAvailability struct {
 	// EmbeddingReindex True when an embeddings model is bound, so the reindex surface (`/embeddings/reindex*`) exists. False is the posture under which those routes answer 501: `--ai-fake`, or a routing document that binds no embeddings model. Bound or unbound only — deliberately not which model, which is the reindex status's own answer to a caller who may read it.
 	EmbeddingReindex bool `json:"embedding_reindex"`
 
-	// Lists True when the installation has switched on Live Lists and Shortlists (`lists.enabled`). False while they are being built: the `/lists` routes answer 404, no agent tool reaches them, and no screen offers them.
+	// Lists True when Live Lists and Shortlists are on (`lists.enabled`, on by default). False when an operator has switched them off: the `/lists` routes answer 404, no agent tool reaches them, and no screen offers them.
 	Lists *bool `json:"lists,omitempty"`
 
 	// Reporting Whether analytics.performance_enabled makes saved reporting available.
@@ -41671,6 +42265,21 @@ type ThreadAudienceOutcome struct {
 	Shared bool `json:"shared"`
 }
 
+// TotpConfirmRequest defines model for TotpConfirmRequest.
+type TotpConfirmRequest struct {
+	// Code The current code from the authenticator being enrolled.
+	Code string `json:"code"`
+}
+
+// TotpEnrolment A pending TOTP enrolment, returned once. Never retrievable again.
+type TotpEnrolment struct {
+	// OtpauthUri The otpauth:// URI the same app scans as a QR code.
+	OtpauthUri string `json:"otpauth_uri"`
+
+	// Secret The base32 shared secret, for manual entry into an authenticator app.
+	Secret string `json:"secret"`
+}
+
 // TranscriptReadReport What one reading of one transcript did. The three outcomes are kept apart on purpose: still reading, read it and it stated nothing, and could not read it are different answers, and collapsing the last two makes a correct empty result look like a broken feature.
 type TranscriptReadReport struct {
 	ActivityId openapi_types.UUID `json:"activity_id"`
@@ -42299,6 +42908,35 @@ type UpdateInstallationSettingsRequest struct {
 	// Name Rename the company.
 	Name *string `json:"name,omitempty"`
 
+	// OidcGroupRoleMap Directory groups that GRANT roles at corporate sign-in. Each key is a group
+	// exactly as the IdP spells it in the ID token's `groups` claim; each value is
+	// one of the system role keys (admin, management, manager, rep, read_only, ops).
+	//
+	// GRANT-ONLY, NEVER REVOKE — read that cost before mapping anything. At each
+	// sign-in the member's token groups are intersected with this map and every
+	// mapped role is ADDED to what they already hold. Removing a member from an
+	// IdP group does NOT take the role away here: revocation stays a deliberate
+	// admin action on the member's own account. Mapping a group onto `admin`
+	// grants admin to every invited member of that group at their next sign-in —
+	// this map is itself admin-only to edit, so that is a deliberate act.
+	//
+	// It creates no accounts: an email nobody invited is refused exactly as
+	// before, whether they have groups or not. Omit the field to leave the map unchanged; send an
+	// empty object to clear it; sending a map replaces the whole stored map.
+	OidcGroupRoleMap *map[string]string `json:"oidc_group_role_map,omitempty"`
+
+	// RequireMfa Make a second factor mandatory: a member without a confirmed authenticator is
+	// confined to the MFA enrolment routes until they set one up. Omit to leave the policy
+	// unchanged.
+	RequireMfa *bool `json:"require_mfa,omitempty"`
+
+	// RequireSso Close the password path: when true, an ordinary member may sign in only through a
+	// configured provider, while an admin keeps the password form as break-glass. Omit to
+	// leave the policy unchanged. This governs who may use password sign-in, never whether
+	// the mechanism exists — an installation cannot strand itself, because admins are
+	// always exempt.
+	RequireSso *bool `json:"require_sso,omitempty"`
+
 	// TimeFormat Display times using the UI language, a 24-hour clock, or a 12-hour clock. Defaults to locale; never changes timezones or stored instants.
 	TimeFormat *UpdateInstallationSettingsRequestTimeFormat `json:"time_format,omitempty"`
 
@@ -42761,6 +43399,26 @@ type UserStatus string
 type UserListResponse struct {
 	Data []User   `json:"data"`
 	Page PageInfo `json:"page"`
+}
+
+// UserSession One session open under a member's account as an admin sees it: the same view its owner gets from MySession, minus `current` — the admin's own request is never one of the target's sessions. No IP, the same coarser view the owner has.
+type UserSession struct {
+	// Id The session's handle, for revoking it.
+	Id openapi_types.UUID `json:"id"`
+
+	// LastActiveAt When a request was last admitted on it.
+	LastActiveAt time.Time `json:"last_active_at"`
+
+	// SignedInAt When the session was opened.
+	SignedInAt time.Time `json:"signed_in_at"`
+
+	// UserAgent The User-Agent the session was opened from, or null when the client sent none.
+	UserAgent *string `json:"user_agent,omitempty"`
+}
+
+// UserSessionList A member's live sessions, newest activity first.
+type UserSessionList struct {
+	Sessions []UserSession `json:"sessions"`
 }
 
 // VCardImportReport One entry per card in the file, in the order the file listed them.
@@ -43834,6 +44492,14 @@ type Worklist struct {
 	// rep who can only see their own work is never offered a switch that would 403.
 	ScopeOptions []WorklistScopeOptions `json:"scope_options"`
 
+	// ScopeTruncated True when `scope` is `team` and the roster behind it came back at its cap, so
+	// rows owned by teammates past the cap were never weighed. The same admission
+	// `/worklist/team` makes with its own `truncated`, and for the same reason: a
+	// page short by a colleague's whole queue is still a page, and one that did not
+	// say so would read as a clear day. Absent or false means the scope was answered
+	// whole.
+	ScopeTruncated *bool `json:"scope_truncated,omitempty"`
+
 	// SourcesUnavailable Sources that could not be included, and why. Empty is the honest common case.
 	SourcesUnavailable []WorklistSourceUnavailable `json:"sources_unavailable"`
 
@@ -44826,6 +45492,24 @@ type WorklistReach struct {
 	// "200+" rather than "200".
 	MoreAvailable bool `json:"more_available"`
 
+	// Personal True when this source answers for the ACTING USER only, whatever `scope` was
+	// asked for. `team` and `all` widen the record-bearing sources, because a wider
+	// row scope is what reaches a colleague's work; they cannot widen a source bound
+	// to the reader inside the module that owns it — notices filter on the recipient,
+	// the capture and AI health lanes refuse a principal with no human behind them,
+	// and an introduction ask names one colleague, so there is no wider tier for it to
+	// widen to.
+	//
+	// A reader asking for `all` therefore gets every shared record they may see PLUS
+	// their own personal queue, and this field is which half each source answered.
+	// Without it a manager reading `all` believes they have seen everything, and the
+	// parts that stayed personal are invisible rather than named.
+	//
+	// It is a fact about the SOURCE, not about this read, so it is true under `mine`
+	// as well — where it happens to tell the reader nothing new, because everything
+	// is theirs. Absent from an older server, which a client reads as false.
+	Personal *bool `json:"personal,omitempty"`
+
 	// Shown How many of them the queue is carrying after folding, filtering and the page cut.
 	Shown int `json:"shown"`
 
@@ -45790,6 +46474,12 @@ type UpdateReportingScheduleParams struct {
 type ListReportingTargetsParams struct {
 	Cursor *string `form:"cursor,omitempty" json:"cursor,omitempty"`
 	Limit  *int    `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// Retired Filter by retirement status; omitted includes both active and retired targets.
+	Retired *bool `form:"retired,omitempty" json:"retired,omitempty"`
+
+	// PeriodStart Filter by the first local day of the target period.
+	PeriodStart *openapi_types.Date `form:"period_start,omitempty" json:"period_start,omitempty"`
 }
 
 // UpdateReportingTargetParams defines parameters for UpdateReportingTarget.
@@ -48673,6 +49363,9 @@ type ListListsParams struct {
 	// Q Matches the name or purpose, case-insensitively.
 	Q *string `form:"q,omitempty" json:"q,omitempty"`
 
+	// Sharing Only lists with one of these sharing settings. `private` alone reads the caller's own private lists; `team` and `workspace` together read the lists shared with others.
+	Sharing *[]ListListsParamsSharing `form:"sharing,omitempty" json:"sharing,omitempty"`
+
 	// IncludeArchived Include soft-deleted (archived) rows. Default false.
 	IncludeArchived *IncludeArchived `form:"include_archived,omitempty" json:"include_archived,omitempty"`
 }
@@ -48682,6 +49375,9 @@ type ListListsParamsEntityType string
 
 // ListListsParamsListType defines parameters for ListLists.
 type ListListsParamsListType string
+
+// ListListsParamsSharing defines parameters for ListLists.
+type ListListsParamsSharing string
 
 // ListListHistoryParams defines parameters for ListListHistory.
 type ListListHistoryParams struct {
@@ -51198,6 +51894,9 @@ type RequestPasswordResetJSONRequestBody RequestPasswordResetJSONBody
 // LoginJSONRequestBody defines body for Login for application/json ContentType.
 type LoginJSONRequestBody = LoginRequest
 
+// CompleteMfaChallengeJSONRequestBody defines body for CompleteMfaChallenge for application/json ContentType.
+type CompleteMfaChallengeJSONRequestBody = MfaLoginRequest
+
 // ResetPasswordJSONRequestBody defines body for ResetPassword for application/json ContentType.
 type ResetPasswordJSONRequestBody ResetPasswordJSONBody
 
@@ -51522,6 +52221,9 @@ type CreateFilteredExportJSONRequestBody = FilteredExportRequest
 // PreviewFilterJSONRequestBody defines body for PreviewFilter for application/json ContentType.
 type PreviewFilterJSONRequestBody = FilterPreviewRequest
 
+// ProposeFilterJSONRequestBody defines body for ProposeFilter for application/json ContentType.
+type ProposeFilterJSONRequestBody = FilterProposalRequest
+
 // ResolveInputCheckJSONRequestBody defines body for ResolveInputCheck for application/json ContentType.
 type ResolveInputCheckJSONRequestBody = ResolveInputCheck
 
@@ -51644,6 +52346,12 @@ type ImportLinkedInConnectionsMultipartRequestBody ImportLinkedInConnectionsMult
 
 // SaveMyLocaleJSONRequestBody defines body for SaveMyLocale for application/json ContentType.
 type SaveMyLocaleJSONRequestBody = SaveMyLocaleRequest
+
+// DisableMyMfaJSONRequestBody defines body for DisableMyMfa for application/json ContentType.
+type DisableMyMfaJSONRequestBody = MfaDisableRequest
+
+// ConfirmMyTotpJSONRequestBody defines body for ConfirmMyTotp for application/json ContentType.
+type ConfirmMyTotpJSONRequestBody = TotpConfirmRequest
 
 // SaveNotificationPreferenceJSONRequestBody defines body for SaveNotificationPreference for application/json ContentType.
 type SaveNotificationPreferenceJSONRequestBody SaveNotificationPreferenceJSONBody
@@ -62559,6 +63267,9 @@ type ServerInterface interface {
 	// End the current session and clear the cookie.
 	// (POST /auth/logout)
 	Logout(w http.ResponseWriter, r *http.Request)
+	// Complete a second-factor challenge and open a session.
+	// (POST /auth/mfa)
+	CompleteMfaChallenge(w http.ResponseWriter, r *http.Request)
 	// Complete federated sign-in; sets the session cookie on success.
 	// (GET /auth/oidc/{provider}/callback)
 	OidcSignInCallback(w http.ResponseWriter, r *http.Request, provider OidcSignInCallbackParamsProvider, params OidcSignInCallbackParams)
@@ -63192,6 +63903,9 @@ type ServerInterface interface {
 	// Rename a custom field's display label (🟢 — not a schema change).
 	// (PATCH /custom-fields/{id})
 	RenameCustomField(w http.ResponseWriter, r *http.Request, id Id, params RenameCustomFieldParams)
+	// The Live Lists whose filter names this custom field.
+	// (GET /custom-fields/{id}/lists)
+	ListCustomFieldLiveLists(w http.ResponseWriter, r *http.Request, id Id)
 	// Edit a picklist custom field's allowed options (🟡 — regenerates the column's CHECK).
 	// (PATCH /custom-fields/{id}/options)
 	UpdateCustomFieldOptions(w http.ResponseWriter, r *http.Request, id Id, params UpdateCustomFieldOptionsParams)
@@ -63396,6 +64110,9 @@ type ServerInterface interface {
 	// Count and sample what a filter would select, before it is saved (LVS-EXT-9).
 	// (POST /filters/preview)
 	PreviewFilter(w http.ResponseWriter, r *http.Request)
+	// Propose filter clauses for a list described in plain words.
+	// (POST /filters/propose)
+	ProposeFilter(w http.ResponseWriter, r *http.Request)
 	// Read what a new filter clause may name on one record type (LVS-EXT-8).
 	// (GET /filters/vocabulary)
 	GetFilterVocabulary(w http.ResponseWriter, r *http.Request, params GetFilterVocabularyParams)
@@ -63648,6 +64365,9 @@ type ServerInterface interface {
 	// Bring an archived list back.
 	// (POST /lists/{id}/restore)
 	RestoreList(w http.ResponseWriter, r *http.Request, id Id)
+	// Record that the signed-in user has opened this list — the mark `since_last_visit` counts from.
+	// (POST /lists/{id}/visit)
+	VisitList(w http.ResponseWriter, r *http.Request, id Id)
 	// What the machinery did, what it needs, what it could not finish, and what it is watching.
 	// (GET /magic)
 	GetMagic(w http.ResponseWriter, r *http.Request, params GetMagicParams)
@@ -63705,12 +64425,30 @@ type ServerInterface interface {
 	// Choose the language your own interface is in.
 	// (PUT /me/locale)
 	SaveMyLocale(w http.ResponseWriter, r *http.Request)
+	// Turn your own multi-factor authentication off.
+	// (DELETE /me/mfa)
+	DisableMyMfa(w http.ResponseWriter, r *http.Request)
+	// Your own multi-factor state.
+	// (GET /me/mfa)
+	GetMyMfa(w http.ResponseWriter, r *http.Request)
+	// Begin enrolling an authenticator app.
+	// (POST /me/mfa/totp)
+	StartMyTotpEnrolment(w http.ResponseWriter, r *http.Request)
+	// Confirm an authenticator and receive recovery codes.
+	// (POST /me/mfa/totp/confirm)
+	ConfirmMyTotp(w http.ResponseWriter, r *http.Request)
 	// How you have asked to be reached, one entry per class of notification.
 	// (GET /me/notification-preferences)
 	ListNotificationPreferences(w http.ResponseWriter, r *http.Request)
 	// Choose where one class of notification reaches you.
 	// (PUT /me/notification-preferences)
 	SaveNotificationPreference(w http.ResponseWriter, r *http.Request)
+	// The sessions open under your account.
+	// (GET /me/sessions)
+	ListMySessions(w http.ResponseWriter, r *http.Request)
+	// End one of your sessions.
+	// (DELETE /me/sessions/{sessionId})
+	RevokeMySession(w http.ResponseWriter, r *http.Request, sessionId openapi_types.UUID)
 	// When you are bookable.
 	// (GET /me/working-hours)
 	GetMyWorkingHours(w http.ResponseWriter, r *http.Request)
@@ -63798,7 +64536,7 @@ type ServerInterface interface {
 	// List partner companies (companies with a partner row), filterable by role/cert status.
 	// (GET /partners)
 	ListPartners(w http.ResponseWriter, r *http.Request, params ListPartnersParams)
-	// List Agent Seat Passports — the caller's own, or the workspace's for a member administrator (metadata only — no token re-disclosure).
+	// List the caller's own Agent Seat Passports (metadata only — no token re-disclosure).
 	// (GET /passports)
 	ListPassports(w http.ResponseWriter, r *http.Request)
 	// Mint an Agent Seat Passport for the calling user's own agent.
@@ -64293,6 +65031,12 @@ type ServerInterface interface {
 	// Set a member's system role. Admin-only, human-only.
 	// (PATCH /users/{id}/role)
 	ChangeUserRole(w http.ResponseWriter, r *http.Request, id Id)
+	// The sessions open under a member's account. Admin-only, human-only.
+	// (GET /users/{id}/sessions)
+	ListUserSessions(w http.ResponseWriter, r *http.Request, id Id)
+	// End one of a member's sessions. Admin-only, human-only.
+	// (DELETE /users/{id}/sessions/{sessionId})
+	RevokeUserSession(w http.ResponseWriter, r *http.Request, id Id, sessionId openapi_types.UUID)
 	// List the caller's saved views (per-user; optionally scoped to one resource).
 	// (GET /views)
 	ListSavedViews(w http.ResponseWriter, r *http.Request, params ListSavedViewsParams)
@@ -65166,6 +65910,12 @@ func (_ Unimplemented) Login(w http.ResponseWriter, r *http.Request) {
 // End the current session and clear the cookie.
 // (POST /auth/logout)
 func (_ Unimplemented) Logout(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Complete a second-factor challenge and open a session.
+// (POST /auth/mfa)
+func (_ Unimplemented) CompleteMfaChallenge(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -66435,6 +67185,12 @@ func (_ Unimplemented) RenameCustomField(w http.ResponseWriter, r *http.Request,
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
+// The Live Lists whose filter names this custom field.
+// (GET /custom-fields/{id}/lists)
+func (_ Unimplemented) ListCustomFieldLiveLists(w http.ResponseWriter, r *http.Request, id Id) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
 // Edit a picklist custom field's allowed options (🟡 — regenerates the column's CHECK).
 // (PATCH /custom-fields/{id}/options)
 func (_ Unimplemented) UpdateCustomFieldOptions(w http.ResponseWriter, r *http.Request, id Id, params UpdateCustomFieldOptionsParams) {
@@ -66840,6 +67596,12 @@ func (_ Unimplemented) GetFieldHistory(w http.ResponseWriter, r *http.Request, p
 // Count and sample what a filter would select, before it is saved (LVS-EXT-9).
 // (POST /filters/preview)
 func (_ Unimplemented) PreviewFilter(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Propose filter clauses for a list described in plain words.
+// (POST /filters/propose)
+func (_ Unimplemented) ProposeFilter(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -67347,6 +68109,12 @@ func (_ Unimplemented) RestoreList(w http.ResponseWriter, r *http.Request, id Id
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
+// Record that the signed-in user has opened this list — the mark `since_last_visit` counts from.
+// (POST /lists/{id}/visit)
+func (_ Unimplemented) VisitList(w http.ResponseWriter, r *http.Request, id Id) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
 // What the machinery did, what it needs, what it could not finish, and what it is watching.
 // (GET /magic)
 func (_ Unimplemented) GetMagic(w http.ResponseWriter, r *http.Request, params GetMagicParams) {
@@ -67461,6 +68229,30 @@ func (_ Unimplemented) SaveMyLocale(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
+// Turn your own multi-factor authentication off.
+// (DELETE /me/mfa)
+func (_ Unimplemented) DisableMyMfa(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Your own multi-factor state.
+// (GET /me/mfa)
+func (_ Unimplemented) GetMyMfa(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Begin enrolling an authenticator app.
+// (POST /me/mfa/totp)
+func (_ Unimplemented) StartMyTotpEnrolment(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Confirm an authenticator and receive recovery codes.
+// (POST /me/mfa/totp/confirm)
+func (_ Unimplemented) ConfirmMyTotp(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
 // How you have asked to be reached, one entry per class of notification.
 // (GET /me/notification-preferences)
 func (_ Unimplemented) ListNotificationPreferences(w http.ResponseWriter, r *http.Request) {
@@ -67470,6 +68262,18 @@ func (_ Unimplemented) ListNotificationPreferences(w http.ResponseWriter, r *htt
 // Choose where one class of notification reaches you.
 // (PUT /me/notification-preferences)
 func (_ Unimplemented) SaveNotificationPreference(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// The sessions open under your account.
+// (GET /me/sessions)
+func (_ Unimplemented) ListMySessions(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// End one of your sessions.
+// (DELETE /me/sessions/{sessionId})
+func (_ Unimplemented) RevokeMySession(w http.ResponseWriter, r *http.Request, sessionId openapi_types.UUID) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -67647,7 +68451,7 @@ func (_ Unimplemented) ListPartners(w http.ResponseWriter, r *http.Request, para
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// List Agent Seat Passports — the caller's own, or the workspace's for a member administrator (metadata only — no token re-disclosure).
+// List the caller's own Agent Seat Passports (metadata only — no token re-disclosure).
 // (GET /passports)
 func (_ Unimplemented) ListPassports(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
@@ -68634,6 +69438,18 @@ func (_ Unimplemented) ReactivateUser(w http.ResponseWriter, r *http.Request, id
 // Set a member's system role. Admin-only, human-only.
 // (PATCH /users/{id}/role)
 func (_ Unimplemented) ChangeUserRole(w http.ResponseWriter, r *http.Request, id Id) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// The sessions open under a member's account. Admin-only, human-only.
+// (GET /users/{id}/sessions)
+func (_ Unimplemented) ListUserSessions(w http.ResponseWriter, r *http.Request, id Id) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// End one of a member's sessions. Admin-only, human-only.
+// (DELETE /users/{id}/sessions/{sessionId})
+func (_ Unimplemented) RevokeUserSession(w http.ResponseWriter, r *http.Request, id Id, sessionId openapi_types.UUID) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -73087,6 +73903,32 @@ func (siw *ServerInterfaceWrapper) ListReportingTargets(w http.ResponseWriter, r
 		return
 	}
 
+	// ------------- Optional query parameter "retired" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "retired", r.URL.Query(), &params.Retired, runtime.BindQueryParameterOptions{Type: "boolean", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "retired"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "retired", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "period_start" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "period_start", r.URL.Query(), &params.PeriodStart, runtime.BindQueryParameterOptions{Type: "string", Format: "date"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "period_start"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "period_start", Err: err})
+		}
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.ListReportingTargets(w, r, params)
 	}))
@@ -74185,6 +75027,20 @@ func (siw *ServerInterfaceWrapper) Logout(w http.ResponseWriter, r *http.Request
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.Logout(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CompleteMfaChallenge operation middleware
+func (siw *ServerInterfaceWrapper) CompleteMfaChallenge(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CompleteMfaChallenge(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -82951,6 +83807,40 @@ func (siw *ServerInterfaceWrapper) RenameCustomField(w http.ResponseWriter, r *h
 	handler.ServeHTTP(w, r)
 }
 
+// ListCustomFieldLiveLists operation middleware
+func (siw *ServerInterfaceWrapper) ListCustomFieldLiveLists(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id Id
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", chi.URLParam(r, "id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{})
+
+	ctx = context.WithValue(ctx, CookieAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListCustomFieldLiveLists(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // UpdateCustomFieldOptions operation middleware
 func (siw *ServerInterfaceWrapper) UpdateCustomFieldOptions(w http.ResponseWriter, r *http.Request) {
 
@@ -86431,6 +87321,26 @@ func (siw *ServerInterfaceWrapper) PreviewFilter(w http.ResponseWriter, r *http.
 	handler.ServeHTTP(w, r)
 }
 
+// ProposeFilter operation middleware
+func (siw *ServerInterfaceWrapper) ProposeFilter(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, CookieAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ProposeFilter(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // GetFilterVocabulary operation middleware
 func (siw *ServerInterfaceWrapper) GetFilterVocabulary(w http.ResponseWriter, r *http.Request) {
 
@@ -89159,6 +90069,19 @@ func (siw *ServerInterfaceWrapper) ListLists(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+	// ------------- Optional query parameter "sharing" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "sharing", r.URL.Query(), &params.Sharing, runtime.BindQueryParameterOptions{Type: "array", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "sharing"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "sharing", Err: err})
+		}
+		return
+	}
+
 	// ------------- Optional query parameter "include_archived" -------------
 
 	err = runtime.BindQueryParameterWithOptions("form", true, false, "include_archived", r.URL.Query(), &params.IncludeArchived, runtime.BindQueryParameterOptions{Type: "boolean", Format: ""})
@@ -89569,6 +90492,38 @@ func (siw *ServerInterfaceWrapper) RestoreList(w http.ResponseWriter, r *http.Re
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.RestoreList(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// VisitList operation middleware
+func (siw *ServerInterfaceWrapper) VisitList(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id Id
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", chi.URLParam(r, "id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, CookieAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.VisitList(w, r, id)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -90167,6 +91122,86 @@ func (siw *ServerInterfaceWrapper) SaveMyLocale(w http.ResponseWriter, r *http.R
 	handler.ServeHTTP(w, r)
 }
 
+// DisableMyMfa operation middleware
+func (siw *ServerInterfaceWrapper) DisableMyMfa(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, CookieAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DisableMyMfa(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetMyMfa operation middleware
+func (siw *ServerInterfaceWrapper) GetMyMfa(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, CookieAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetMyMfa(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// StartMyTotpEnrolment operation middleware
+func (siw *ServerInterfaceWrapper) StartMyTotpEnrolment(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, CookieAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.StartMyTotpEnrolment(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ConfirmMyTotp operation middleware
+func (siw *ServerInterfaceWrapper) ConfirmMyTotp(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, CookieAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ConfirmMyTotp(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // ListNotificationPreferences operation middleware
 func (siw *ServerInterfaceWrapper) ListNotificationPreferences(w http.ResponseWriter, r *http.Request) {
 
@@ -90198,6 +91233,58 @@ func (siw *ServerInterfaceWrapper) SaveNotificationPreference(w http.ResponseWri
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.SaveNotificationPreference(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListMySessions operation middleware
+func (siw *ServerInterfaceWrapper) ListMySessions(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, CookieAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListMySessions(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RevokeMySession operation middleware
+func (siw *ServerInterfaceWrapper) RevokeMySession(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "sessionId" -------------
+	var sessionId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "sessionId", chi.URLParam(r, "sessionId"), &sessionId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "sessionId", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, CookieAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RevokeMySession(w, r, sessionId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -98982,6 +100069,79 @@ func (siw *ServerInterfaceWrapper) ChangeUserRole(w http.ResponseWriter, r *http
 	handler.ServeHTTP(w, r)
 }
 
+// ListUserSessions operation middleware
+func (siw *ServerInterfaceWrapper) ListUserSessions(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id Id
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", chi.URLParam(r, "id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, CookieAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListUserSessions(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RevokeUserSession operation middleware
+func (siw *ServerInterfaceWrapper) RevokeUserSession(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id Id
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", chi.URLParam(r, "id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "sessionId" -------------
+	var sessionId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "sessionId", chi.URLParam(r, "sessionId"), &sessionId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "sessionId", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, CookieAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RevokeUserSession(w, r, id, sessionId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // ListSavedViews operation middleware
 func (siw *ServerInterfaceWrapper) ListSavedViews(w http.ResponseWriter, r *http.Request) {
 
@@ -101775,6 +102935,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/auth/logout", wrapper.Logout)
 	})
 	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/auth/mfa", wrapper.CompleteMfaChallenge)
+	})
+	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/auth/oidc/{provider}/callback", wrapper.OidcSignInCallback)
 	})
 	r.Group(func(r chi.Router) {
@@ -102408,6 +103571,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Patch(options.BaseURL+"/custom-fields/{id}", wrapper.RenameCustomField)
 	})
 	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/custom-fields/{id}/lists", wrapper.ListCustomFieldLiveLists)
+	})
+	r.Group(func(r chi.Router) {
 		r.Patch(options.BaseURL+"/custom-fields/{id}/options", wrapper.UpdateCustomFieldOptions)
 	})
 	r.Group(func(r chi.Router) {
@@ -102610,6 +103776,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/filters/preview", wrapper.PreviewFilter)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/filters/propose", wrapper.ProposeFilter)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/filters/vocabulary", wrapper.GetFilterVocabulary)
@@ -102864,6 +104033,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/lists/{id}/restore", wrapper.RestoreList)
 	})
 	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/lists/{id}/visit", wrapper.VisitList)
+	})
+	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/magic", wrapper.GetMagic)
 	})
 	r.Group(func(r chi.Router) {
@@ -102921,10 +104093,28 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Put(options.BaseURL+"/me/locale", wrapper.SaveMyLocale)
 	})
 	r.Group(func(r chi.Router) {
+		r.Delete(options.BaseURL+"/me/mfa", wrapper.DisableMyMfa)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/me/mfa", wrapper.GetMyMfa)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/me/mfa/totp", wrapper.StartMyTotpEnrolment)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/me/mfa/totp/confirm", wrapper.ConfirmMyTotp)
+	})
+	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/me/notification-preferences", wrapper.ListNotificationPreferences)
 	})
 	r.Group(func(r chi.Router) {
 		r.Put(options.BaseURL+"/me/notification-preferences", wrapper.SaveNotificationPreference)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/me/sessions", wrapper.ListMySessions)
+	})
+	r.Group(func(r chi.Router) {
+		r.Delete(options.BaseURL+"/me/sessions/{sessionId}", wrapper.RevokeMySession)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/me/working-hours", wrapper.GetMyWorkingHours)
@@ -103507,6 +104697,12 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Patch(options.BaseURL+"/users/{id}/role", wrapper.ChangeUserRole)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/users/{id}/sessions", wrapper.ListUserSessions)
+	})
+	r.Group(func(r chi.Router) {
+		r.Delete(options.BaseURL+"/users/{id}/sessions/{sessionId}", wrapper.RevokeUserSession)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/views", wrapper.ListSavedViews)
